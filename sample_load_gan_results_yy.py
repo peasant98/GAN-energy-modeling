@@ -110,8 +110,19 @@ def main(types, num_train):
     for building_type in types:
         for train_size in num_train:
             for i in range(50,2001,50):
-                basefilename = f'./results/og_gan_results_trainsize{train_size}'
-                pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
-                outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
+                # basefilename = f'./results/og_gan_results_trainsize{train_size}'
+
+                basefilename = './results/og_gan_results_trainsize{train_size}'.format(train_size=train_size)
+
+                # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
+                pickle_name = '{basefilename}_epochs{i}_type_{building_type}.pickle'.format(basefilename=basefilename,
+                                                                                            i=i,
+                                                                                            building_type=building_type)
+
+                # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
+                outcsvname = '{basefilename}_epochs{i}_type_{building_type}.csv'.format(basefilename=basefilename,
+                                                                                        i=i,
+                                                                                        building_type=building_type)
+
                 convert_results_pickle_to_csv(pickle_name,outfilename=outcsvname)
 
