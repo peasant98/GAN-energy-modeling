@@ -69,9 +69,17 @@ def generate_latent_points_grid(latent_dim, n_samples):
 # evaluate the discriminator, plot generated images, save generator model
 def summarize_performance(step, latent_dim, building_type=7, samples_to_gen=400, num_train=400, num_epochs=300):
     # load the model
-    model = load_model(f'./h5/gan_type{building_type}_epochs{step}_trainsize{num_train}.h5')
+    model_str = './h5/gan_type{building_type}_epochs{step}_trainsize{num_train}.h5'.format(building_type=building_type, step=step,
+                                                                                           num_train=num_train)
+    # model = load_model(f'./h5/gan_type{building_type}_epochs{step}_trainsize{num_train}.h5')
+    model = load_model(model_str)
+
     zs = generate_latent_points_grid(latent_dim, samples_to_gen)
-    prediction(zs, model, f'./results/og_gan_results_trainsize{num_train}_epochs{step}_type_{building_type}.pickle', building_type=building_type)
+    prediction_str = './results/og_gan_results_trainsize{num_train}_epochs{step}_type_{building_type}.pickle'.format(num_train=num_train,
+                                                                                                                     step=step,
+                                                                                                                     building_type=building_type)
+    prediction(zs, model, prediction_str, building_type=building_type)
+
 
 #if __name__ == '__main__':
 def main(types, gens, num_train):
