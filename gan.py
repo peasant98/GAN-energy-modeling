@@ -114,7 +114,8 @@ def define_gan(g_model, d_model):
 
 def load_real_samples_grid(class_num=7, num_train=400):
 	# load the REAL data.
-	f = open(f'./data_collect_select_class{class_num}.csv','r')
+	f = open('./data_collect_select_class{}.csv'.format(class_num), 'r')
+	# f = open(f'./data_collect_select_class{class_num}.csv','r')
 	lines = f.readlines()
 	f.close()
 	X_temp = []
@@ -238,7 +239,10 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=310, n_batc
 			# every 10 epochs
 			# TIMES.append(total_time)
 			# saves the model
-			g_model.save(f'./h5/gan_type{building_type}_epochs{i+1}_trainsize{num_train}.h5')
+			# g_model.save(f'./h5/gan_type{building_type}_epochs{i+1}_trainsize{num_train}.h5')
+			g_model_filename = './h5/gan_type{building_type}_epochs{j}_trainsize{num_train}.h5'.format(building_type=building_type, j=i+1, num_train=num_train)
+			g_model.save(g_model_filename)
+
 	#print(f'Time for {n_batch} batch size, {n_epochs} epochs, total time is {total_time}')
 	#all_times = np.array(TIMES)
 	#np.savetxt(f'./h5/gan_type{building_type}_epoch_{n_epochs}_num_train{num_train}_times.txt', all_times)
