@@ -55,4 +55,4 @@ if __name__ == '__main__':
     new_df.to_csv('data_collect_select_equal.csv', index=False)
 
     for idx, val in enumerate(label_set):
-        individual_dfs[idx].to_csv(f'data_collect_select_class{val}.csv', index=False)
+        individual_dfs[idx].to_csv('data_collect_select_class{val}.csv'.format(val=val), index=False)
