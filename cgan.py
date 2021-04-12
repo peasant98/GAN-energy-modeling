@@ -280,17 +280,7 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=310, n_batc
 
 		total_time += (time.time() - begin)
 		if (i+1) % 50 == 0:
-			# print(f'Time after {i+1} epochs', total_time)
-			# TIMES.append(total_time)
-			g_model.save(f'./h5/cgan_epochs{i+1}_trainsize{amt}.h5')
-
-			# summarize_performance(i, g_model, d_model, latent_dim,
-            #                   dataset, num_classes=num_classes,
-			# 				  train_size=amt)
-	# save the generator model
-	# all_times = np.array(TIMES)
-	# g_model.save(f'cgan_size{amt}.h5')
-	# np.savetxt(f'cgan_type_trainsize{amt}_times.txt', all_times)
+			g_model.save(f'./h5/cgan_trainsize{amt}_epochs{i+1}.h5')
 
 
 # freq_dict={7: 400, 12: 4500, 14: 800, 15:400,
@@ -335,7 +325,7 @@ def summarize_performance(step, g_model, d_model, latent_dim, dataset, n_samples
 	# save the generator model
 
 
-def main(types, gens, num_train):
+def main(types, num_train):
     # size of the latent space
 	latent_dim = 1000
 	# create the discriminator
@@ -351,6 +341,3 @@ def main(types, gens, num_train):
 	train(g_model, d_model, gan_model, dataset, latent_dim,
 			amt=num_train, num_classes=num_classes,
 			n_epochs=2000)
-
-# if __name__ == '__main__':
-#     main([1, 2, 3, 4], None, 100)
