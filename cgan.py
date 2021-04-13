@@ -28,9 +28,6 @@ from tensorflow.compat.v1 import InteractiveSession
 
 import pandas as pd
 
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
 
 SELECTED_CLASSES = [7, 12, 14, 15]
 
@@ -326,6 +323,10 @@ def summarize_performance(step, g_model, d_model, latent_dim, dataset, n_samples
 
 
 def main(types, num_train):
+	config = ConfigProto()
+	config.gpu_options.allow_growth = True
+	session = InteractiveSession(config=config)
+
     # size of the latent space
 	latent_dim = 1000
 	# create the discriminator
