@@ -118,6 +118,7 @@ def calculate(path_csv_list,gan_type,train_size,epochs,label_list):
     return summary
 
 def main(types, train_size, i):
+    types = [7, 12, 14, 15]
     for gan_type in ['cgan']:
         final_table = []
         for epochs in range(50,2001,50):
