@@ -13,18 +13,18 @@ if not os.path.isdir('./h5'):
 if not os.path.isdir('./results'):
     os.mkdir('./results')
 
-for i in range(1, 11):
+for i in [3, 10]:
     num_train = i*10
-    # cgan.main(types, num_train)
+    cgan.main(types, num_train)
     print('complete_'+str(i)+'_gan_training')
 
     for j in range(1, 6):
         if not os.path.isdir('./'+str(j)+'_csv'):
             os.mkdir('./'+str(j)+'_csv')
-        # gener.main(types, gens, num_train)
+        gener.main(types, gens, num_train)
         print('complete_'+str(i)+'_gan_generation_pickle')
 
-        # csv_gener.main(types, num_train)
+        csv_gener.main(types, num_train)
         print('complete_'+str(i)+'_gan_generation_csv')
 
         r2.main(types, num_train, j)
