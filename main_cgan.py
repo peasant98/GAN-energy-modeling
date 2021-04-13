@@ -1,4 +1,3 @@
-import gan
 import cgan
 import cgan_sample_generation as gener
 import sample_load_cgan_results as csv_gener

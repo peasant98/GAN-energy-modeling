@@ -3,7 +3,6 @@ import numpy as np
 from numpy import expand_dims, zeros, ones, asarray
 from numpy.random import randn
 from numpy.random import randint
-from keras.datasets.fashion_mnist import load_data
 from keras.optimizers import Adam
 from keras.models import Model
 from keras.layers import Input
@@ -16,15 +15,12 @@ from keras.layers import LeakyReLU
 from keras.layers import Dropout
 from keras.layers import Embedding
 from keras.layers import Concatenate
-import tensorflow as tf
-
-tf.executing_eagerly()
 
 import pickle
 
 import time
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+from tensorflow import ConfigProto
+from tensorflow import InteractiveSession
 
 import pandas as pd
 
@@ -199,18 +195,6 @@ def load_real_samples_grid(num_types=4, num_per_type=100):
 				current_type_idx += 1
 
 	return [np.array(new_X), np.array(new_trainy)]
-
-# load fashion mnist images
-def load_real_samples():
-	# load dataset
-	(trainX, trainy), (_, _) = load_data()
-	# expand to 3d, e.g. add channels
-	X = expand_dims(trainX, axis=-1)
-	# convert from ints to floats
-	X = X.astype('float32')
-	# scale from [0,255] to [-1,1]
-	X = (X - 127.5) / 127.5
-	return [X, trainy]
 
 # # select real samples
 def generate_real_samples(dataset, n_samples):
