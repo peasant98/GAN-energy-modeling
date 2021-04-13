@@ -104,20 +104,19 @@ def combine_pickle_data(filenames_list, outfilename):
 
 
 #if __name__ == '__main__':
-def main(types, num_train):
+def main(types, train_size):
     # load the results
     # sample_load_results('gan_results2575.pickle')
-    for train_size in num_train:
-        for i in range(50,2001,50):
-            basefilename = f'./results/cgan_results_trainsize{train_size}'
+    for i in range(50,2001,50):
+        basefilename = f'./results/cgan_results_trainsize{train_size}'
 
 
-            # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
-            pickle_name = '{basefilename}_epoch{i}.pickle'.format(basefilename=basefilename,
-                                                                   i=i)
+        # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
+        pickle_name = '{basefilename}_epoch{i}.pickle'.format(basefilename=basefilename,
+                                                                i=i)
 
-            # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
-            outcsvname = '{basefilename}_epochs{i}.csv'.format(basefilename=basefilename, i=i)
+        # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
+        outcsvname = '{basefilename}_epochs{i}.csv'.format(basefilename=basefilename, i=i)
 
-            convert_results_pickle_to_csv(pickle_name,outfilename=outcsvname)
+        convert_results_pickle_to_csv(pickle_name, outfilename=outcsvname)
 

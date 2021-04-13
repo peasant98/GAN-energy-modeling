@@ -201,7 +201,7 @@ def load_real_samples_grid(num_types=4, num_per_type=100):
 			if types_dict[current_type_idx] == num_per_type:
 				current_type_idx += 1
 
-	return [new_X, new_trainy]
+	return [np.array(new_X), np.array(new_trainy)]
 
 # load fashion mnist images
 def load_real_samples():
@@ -251,7 +251,7 @@ def generate_fake_samples(generator, latent_dim, n_samples, n_classes):
 def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=310, n_batch=32,
           num_classes=4, amt=100):
 	total_time = 0
-	bat_per_epo = int(dataset[0].shape[0] / n_batch)
+	bat_per_epo = int(np.array(dataset[0]).shape[0] / n_batch)
 	half_batch = int(n_batch / 2)
 	# manually enumerate epochs
 	for i in range(n_epochs):
