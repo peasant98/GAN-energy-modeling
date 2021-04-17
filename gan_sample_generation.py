@@ -81,12 +81,11 @@ def summarize_performance(step, latent_dim, building_type=7, samples_to_gen=400,
     prediction(zs, model, prediction_str, building_type=building_type)
 
 
-#if __name__ == '__main__':
 def main(types, gens, num_train):
     config = ConfigProto()
     config.gpu_options.allow_growth = True
     session = InteractiveSession(config=config)
-    
+
     #SELECTED_CLASSES = [7, 12, 14, 15]
     #SELECTED_CLASSES = [14, 15]
     
