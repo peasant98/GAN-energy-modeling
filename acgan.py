@@ -197,7 +197,7 @@ def load_real_samples():
 	return [X, trainy]
 
 
-def load_real_samples_grid():
+def load_real_samples_grid(num_types=4, num_per_type=100):
 	# load the REAL data.
 	f = open('./data_collect_select_equal.csv','r')
 	lines = f.readlines()
@@ -217,9 +217,25 @@ def load_real_samples_grid():
 	X1 = expand_dims(trainX, axis=-1)
 	X = expand_dims(X1, axis=-1)
 	print(X.shape, trainy.shape)
-	# print(X, trainy)
-	return [X, trainy]
 
+	dataset = [X, trainy]
+	new_X = []
+	new_trainy = []
+
+	types_dict = {}
+	for i in range(num_types):
+		types_dict[i] = 0
+
+	current_type_idx = 0
+	for idx, val in enumerate(dataset[0]):
+		if dataset[1][idx] == current_type_idx:
+			types_dict[current_type_idx] += 1
+			new_X.append(val)
+			new_trainy.append(dataset[1][idx])
+			if types_dict[current_type_idx] == num_per_type:
+				current_type_idx += 1
+
+	return [np.array(new_X), np.array(new_trainy)]
 
 # select real samples
 def generate_real_samples(dataset, n_samples):
@@ -287,7 +303,7 @@ def summarize_performance(step, g_model, latent_dim, n_samples=400,
 
 # train the generator and discriminator
 def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=310, n_batch=32,
-          amt=100, n_classes=4):
+          amt=100, num_classes=4):
     total_time = 0
     # calculate the number of batches per training epoch
     bat_per_epo = int(dataset[0].shape[0] / n_batch)
@@ -319,29 +335,35 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=310, n_batc
             total_time += (time.time() - begin)
 
         if (i+1) % 50 == 0:
-            TIMES.append(total_time)
-            summarize_performance(i, g_model, latent_dim,
-								     amt=amt)
+            g_model.save(f'./h5/acgan_trainsize{amt}_epochs{i+1}.h5')
+            # summarize_performance(i, g_model, latent_dim,
+			# 					     amt=amt)
+
         print('epoch >%d, dr[%.3f,%.3f], df[%.3f,%.3f], g[%.3f,%.3f]' % (i+1, d_r1,d_r2, d_f,d_f2, g_1,g_2))
     # save the generator model
-    all_times = np.array(TIMES)
-	# g_model.save(f'cgan_size{amt}.h5')
-    np.savetxt(f'acgan_trainsize{amt}_times.txt', all_times)
+    # all_times = np.array(TIMES)
+	# # g_model.save(f'cgan_size{amt}.h5')
+    # np.savetxt(f'acgan_trainsize{amt}_times.txt', all_times)
 
 
-if __name__ == '__main__':
+
+def main(types, num_train):
+	config = ConfigProto()
+	config.gpu_options.allow_growth = True
+	session = InteractiveSession(config=config)
+
     # size of the latent space
-    latent_dim = 1000
-    # create the discriminator
-    num_classes = 4
-    discriminator = define_discriminator(n_classes=num_classes)
-
-    # create the generator
-    generator = define_generator(latent_dim, n_classes=num_classes)
-    # create the gan
-    gan_model = define_gan(generator, discriminator)
-    # load image data
-    dataset = load_real_samples_grid()
-    # train model
-    train(generator, discriminator, gan_model, dataset, latent_dim,
-		  n_epochs=2000, amt=400)
+	latent_dim = 1000
+	# create the discriminator
+	num_classes = len(types)
+	d_model = define_discriminator(n_classes=num_classes)
+	# create the generator
+	g_model = define_generator(latent_dim, n_classes=num_classes)
+	# create the gan
+	gan_model = define_gan(g_model, d_model)
+	# load image data
+	dataset = load_real_samples_grid(num_types=num_classes, num_per_type=num_train)
+	# train model
+	train(g_model, d_model, gan_model, dataset, latent_dim,
+			amt=num_train, num_classes=num_classes,
+			n_epochs=2000)
