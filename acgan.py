@@ -13,24 +13,18 @@ from keras.layers import Flatten
 from keras.layers import Conv2D
 from keras.layers import Conv2DTranspose
 from keras.layers import LeakyReLU
-from keras.layers import BatchNormalization
 from keras.layers import Dropout
 from keras.layers import Embedding
-from keras.layers import Activation
 from keras.layers import Concatenate
-from keras.initializers import RandomNormal
-from matplotlib import pyplot
 
 import pandas as pd
 import pickle
 import numpy as np
 import time
-import tensorflow as tf
 
-tf.executing_eagerly()
 
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+from tensorflow import ConfigProto
+from tensorflow import InteractiveSession
 
 import pandas as pd
 
