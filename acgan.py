@@ -4,7 +4,6 @@ from numpy import ones, asarray
 from numpy import expand_dims
 from numpy.random import randn
 from numpy.random import randint
-from keras.datasets.fashion_mnist import load_data
 from keras.optimizers import Adam
 from keras.models import Model
 from keras.layers import Input
@@ -183,18 +182,6 @@ def define_gan(g_model, d_model):
 	model.compile(loss=['binary_crossentropy', 'sparse_categorical_crossentropy'], optimizer=opt)
 	return model
 
-# load images
-def load_real_samples():
-	# load dataset
-	(trainX, trainy), (_, _) = load_data()
-	# expand to 3d, e.g. add channels
-	X = expand_dims(trainX, axis=-1)
-	# convert from ints to floats
-	X = X.astype('float32')
-	# scale from [0,255] to [-1,1]
-	X = (X - 127.5) / 127.5
-	print(X.shape, trainy.shape)
-	return [X, trainy]
 
 
 def load_real_samples_grid(num_types=4, num_per_type=100):
