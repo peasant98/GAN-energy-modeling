@@ -1,4 +1,5 @@
 # example of fitting an auxiliary classifier gan (ac-gan) on fashion mnsit
+from keras.initializers import RandomNormal
 from numpy import zeros
 from numpy import ones, asarray
 from numpy import expand_dims
@@ -15,7 +16,7 @@ from keras.layers import Conv2DTranspose
 from keras.layers import LeakyReLU
 from keras.layers import Dropout
 from keras.layers import Embedding
-from keras.layers import Concatenate
+from keras.layers import Concatenate, BatchNormalization
 
 import pandas as pd
 import pickle
@@ -86,26 +87,26 @@ def define_discriminator(in_shape=(744,1,1), n_classes=4):
 	# image input
 	in_image = Input(shape=in_shape)
 	# downsample to 14x14
-	# fe = Conv2D(32, (3,3), strides=(2,2), padding='same')(in_image)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
+	fe = Conv2D(32, (3,3), strides=(2,2), padding='same')(in_image)
+	fe = LeakyReLU(alpha=0.2)(fe)
+	fe = Dropout(0.5)(fe)
 	# # normal
-	# fe = Conv2D(64, (3,3), padding='same')(fe)
-	# fe = BatchNormalization()(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
+	fe = Conv2D(64, (3,3), padding='same')(fe)
+	fe = BatchNormalization()(fe)
+	fe = LeakyReLU(alpha=0.2)(fe)
+	fe = Dropout(0.5)(fe)
 	# # downsample to 7x7
-	# fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
-	# fe = BatchNormalization()(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
+	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	fe = BatchNormalization()(fe)
+	fe = LeakyReLU(alpha=0.2)(fe)
+	fe = Dropout(0.5)(fe)
 	# # normal
-	# fe = Conv2D(256, (3,3), padding='same')(fe)
-	# fe = BatchNormalization()(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
+	fe = Conv2D(256, (3,3), padding='same')(fe)
+	fe = BatchNormalization()(fe)
+	fe = LeakyReLU(alpha=0.2)(fe)
+	fe = Dropout(0.5)(fe)
 
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(in_image)
+	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
 	fe = LeakyReLU(alpha=0.2)(fe)
 	# downsample
 	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
@@ -130,13 +131,14 @@ def define_discriminator(in_shape=(744,1,1), n_classes=4):
 # define the standalone generator model
 def define_generator(latent_dim, n_classes=4):
 	# weight initialization
+	init = RandomNormal(stddev=0.02)
 	# label input
 	in_label = Input(shape=(1,))
 	# embedding for categorical input
 	li = Embedding(n_classes, 50)(in_label)
 	# linear multiplication
 	n_nodes = 186
-	li = Dense(n_nodes)(li)
+	li = Dense(n_nodes, kernel_initializer=init)(li)
 	# reshape to additional channel
 	li = Reshape((186, 1, 1))(li)
 	# image generator input
