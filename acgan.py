@@ -117,14 +117,13 @@ def define_discriminator(in_shape=(744,1,1), n_classes=4):
 # define the standalone generator model
 def define_generator(latent_dim, n_classes=4):
 	# weight initialization
-	init = RandomNormal(stddev=0.02)
 	# label input
 	in_label = Input(shape=(1,))
 	# embedding for categorical input
 	li = Embedding(n_classes, 50)(in_label)
 	# linear multiplication
 	n_nodes = 186
-	li = Dense(n_nodes, kernel_initializer=init)(li)
+	li = Dense(n_nodes)(li)
 	# reshape to additional channel
 	li = Reshape((186, 1, 1))(li)
 	# image generator input
