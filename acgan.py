@@ -87,30 +87,16 @@ def define_discriminator(in_shape=(744,1,1), n_classes=4):
 	# image input
 	in_image = Input(shape=in_shape)
 	# downsample to 14x14
-	fe = Conv2D(32, (3,3), strides=(2,2), padding='same')(in_image)
+	fe = Conv2D(128, (3,3), strides=(2,1), padding='same')(in_image)
 	fe = LeakyReLU(alpha=0.2)(fe)
-	fe = Dropout(0.5)(fe)
-	# # normal
-	fe = Conv2D(64, (3,3), padding='same')(fe)
-	fe = BatchNormalization()(fe)
-	fe = LeakyReLU(alpha=0.2)(fe)
-	fe = Dropout(0.5)(fe)
-	# # downsample to 7x7
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
-	fe = BatchNormalization()(fe)
-	fe = LeakyReLU(alpha=0.2)(fe)
-	fe = Dropout(0.5)(fe)
-	# # normal
-	fe = Conv2D(256, (3,3), padding='same')(fe)
-	fe = BatchNormalization()(fe)
-	fe = LeakyReLU(alpha=0.2)(fe)
-	fe = Dropout(0.5)(fe)
 
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	# normal
+	fe = Conv2D(128, (3,3), strides=(2, 1), padding='same')(fe)
 	fe = LeakyReLU(alpha=0.2)(fe)
-	# downsample
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	# # downsample to 7x7
+	fe = Conv2D(128, (3,3), strides=(2,1), padding='same')(fe)
 	fe = LeakyReLU(alpha=0.2)(fe)
+
 	# # flatten feature maps
 	fe = Flatten()(fe)
 	# dropout
