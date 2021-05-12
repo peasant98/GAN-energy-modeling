@@ -106,11 +106,11 @@ def define_discriminator(in_shape=(744,1,1), n_classes=4):
 	fe = LeakyReLU(alpha=0.2)(fe)
 	fe = Dropout(0.5)(fe)
 
-	# fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# # downsample
-	# fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
+	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	fe = LeakyReLU(alpha=0.2)(fe)
+	# downsample
+	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	fe = LeakyReLU(alpha=0.2)(fe)
 	# # flatten feature maps
 	fe = Flatten()(fe)
 	# dropout
