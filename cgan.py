@@ -85,10 +85,13 @@ def define_discriminator(in_shape=(744, 1, 1), n_classes=4):
 	# concat label as a channel
 	merge = Concatenate()([in_image, li])
 	# downsample
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(merge)
+	fe = Conv2D(128, (3,3), strides=(2,1), padding='same')(merge)
 	fe = LeakyReLU(alpha=0.2)(fe)
 	# downsample
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	fe = Conv2D(128, (3,3), strides=(2,1), padding='same')(fe)
+	fe = LeakyReLU(alpha=0.2)(fe)
+
+	fe = Conv2D(128, (3,3), strides=(2, 1), padding='same')(fe)
 	fe = LeakyReLU(alpha=0.2)(fe)
 	# flatten feature maps
 
