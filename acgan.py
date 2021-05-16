@@ -1,10 +1,10 @@
 # example of fitting an auxiliary classifier gan (ac-gan) on fashion mnsit
+from keras.initializers import RandomNormal
 from numpy import zeros
 from numpy import ones, asarray
 from numpy import expand_dims
 from numpy.random import randn
 from numpy.random import randint
-from keras.datasets.fashion_mnist import load_data
 from keras.optimizers import Adam
 from keras.models import Model
 from keras.layers import Input
@@ -14,24 +14,18 @@ from keras.layers import Flatten
 from keras.layers import Conv2D
 from keras.layers import Conv2DTranspose
 from keras.layers import LeakyReLU
-from keras.layers import BatchNormalization
 from keras.layers import Dropout
 from keras.layers import Embedding
-from keras.layers import Activation
-from keras.layers import Concatenate
-from keras.initializers import RandomNormal
-from matplotlib import pyplot
+from keras.layers import Concatenate, BatchNormalization
 
 import pandas as pd
 import pickle
 import numpy as np
 import time
-import tensorflow as tf
 
-tf.executing_eagerly()
 
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+from tensorflow import ConfigProto
+from tensorflow import InteractiveSession
 
 import pandas as pd
 
@@ -93,31 +87,17 @@ def define_discriminator(in_shape=(744,1,1), n_classes=4):
 	# image input
 	in_image = Input(shape=in_shape)
 	# downsample to 14x14
-	# fe = Conv2D(32, (3,3), strides=(2,2), padding='same')(in_image)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
-	# # normal
-	# fe = Conv2D(64, (3,3), padding='same')(fe)
-	# fe = BatchNormalization()(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
-	# # downsample to 7x7
-	# fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
-	# fe = BatchNormalization()(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
-	# # normal
-	# fe = Conv2D(256, (3,3), padding='same')(fe)
-	# fe = BatchNormalization()(fe)
-	# fe = LeakyReLU(alpha=0.2)(fe)
-	# fe = Dropout(0.5)(fe)
+	fe = Conv2D(128, (3,3), strides=(2,1), padding='same')(in_image)
+	fe = LeakyReLU(alpha=0.2)(fe)
 
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(in_image)
+	# normal
+	fe = Conv2D(128, (3,3), strides=(2, 1), padding='same')(fe)
 	fe = LeakyReLU(alpha=0.2)(fe)
-	# downsample
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	# # downsample to 7x7
+	fe = Conv2D(128, (3,3), strides=(2,1), padding='same')(fe)
 	fe = LeakyReLU(alpha=0.2)(fe)
-	# flatten feature maps
+
+	# # flatten feature maps
 	fe = Flatten()(fe)
 	# dropout
 	fe = Dropout(0.4)(fe)
@@ -183,21 +163,9 @@ def define_gan(g_model, d_model):
 	model.compile(loss=['binary_crossentropy', 'sparse_categorical_crossentropy'], optimizer=opt)
 	return model
 
-# load images
-def load_real_samples():
-	# load dataset
-	(trainX, trainy), (_, _) = load_data()
-	# expand to 3d, e.g. add channels
-	X = expand_dims(trainX, axis=-1)
-	# convert from ints to floats
-	X = X.astype('float32')
-	# scale from [0,255] to [-1,1]
-	X = (X - 127.5) / 127.5
-	print(X.shape, trainy.shape)
-	return [X, trainy]
 
 
-def load_real_samples_grid():
+def load_real_samples_grid(num_types=4, num_per_type=100):
 	# load the REAL data.
 	f = open('./data_collect_select_equal.csv','r')
 	lines = f.readlines()
@@ -217,9 +185,25 @@ def load_real_samples_grid():
 	X1 = expand_dims(trainX, axis=-1)
 	X = expand_dims(X1, axis=-1)
 	print(X.shape, trainy.shape)
-	# print(X, trainy)
-	return [X, trainy]
 
+	dataset = [X, trainy]
+	new_X = []
+	new_trainy = []
+
+	types_dict = {}
+	for i in range(num_types):
+		types_dict[i] = 0
+
+	current_type_idx = 0
+	for idx, val in enumerate(dataset[0]):
+		if dataset[1][idx] == current_type_idx:
+			types_dict[current_type_idx] += 1
+			new_X.append(val)
+			new_trainy.append(dataset[1][idx])
+			if types_dict[current_type_idx] == num_per_type:
+				current_type_idx += 1
+
+	return [np.array(new_X), np.array(new_trainy)]
 
 # select real samples
 def generate_real_samples(dataset, n_samples):
@@ -287,7 +271,7 @@ def summarize_performance(step, g_model, latent_dim, n_samples=400,
 
 # train the generator and discriminator
 def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=310, n_batch=32,
-          amt=100, n_classes=4):
+          amt=100, num_classes=4):
     total_time = 0
     # calculate the number of batches per training epoch
     bat_per_epo = int(dataset[0].shape[0] / n_batch)
@@ -319,29 +303,35 @@ def train(g_model, d_model, gan_model, dataset, latent_dim, n_epochs=310, n_batc
             total_time += (time.time() - begin)
 
         if (i+1) % 50 == 0:
-            TIMES.append(total_time)
-            summarize_performance(i, g_model, latent_dim,
-								     amt=amt)
+            g_model.save(f'./h5/acgan_trainsize{amt}_epochs{i+1}.h5')
+            # summarize_performance(i, g_model, latent_dim,
+			# 					     amt=amt)
+
         print('epoch >%d, dr[%.3f,%.3f], df[%.3f,%.3f], g[%.3f,%.3f]' % (i+1, d_r1,d_r2, d_f,d_f2, g_1,g_2))
     # save the generator model
-    all_times = np.array(TIMES)
-	# g_model.save(f'cgan_size{amt}.h5')
-    np.savetxt(f'acgan_trainsize{amt}_times.txt', all_times)
+    # all_times = np.array(TIMES)
+	# # g_model.save(f'cgan_size{amt}.h5')
+    # np.savetxt(f'acgan_trainsize{amt}_times.txt', all_times)
 
 
-if __name__ == '__main__':
+
+def main(types, num_train):
+	config = ConfigProto()
+	config.gpu_options.allow_growth = True
+	session = InteractiveSession(config=config)
+
     # size of the latent space
-    latent_dim = 1000
-    # create the discriminator
-    num_classes = 4
-    discriminator = define_discriminator(n_classes=num_classes)
-
-    # create the generator
-    generator = define_generator(latent_dim, n_classes=num_classes)
-    # create the gan
-    gan_model = define_gan(generator, discriminator)
-    # load image data
-    dataset = load_real_samples_grid()
-    # train model
-    train(generator, discriminator, gan_model, dataset, latent_dim,
-		  n_epochs=2000, amt=400)
+	latent_dim = 1000
+	# create the discriminator
+	num_classes = len(types)
+	d_model = define_discriminator(n_classes=num_classes)
+	# create the generator
+	g_model = define_generator(latent_dim, n_classes=num_classes)
+	# create the gan
+	gan_model = define_gan(g_model, d_model)
+	# load image data
+	dataset = load_real_samples_grid(num_types=num_classes, num_per_type=num_train)
+	# train model
+	train(g_model, d_model, gan_model, dataset, latent_dim,
+			amt=num_train, num_classes=num_classes,
+			n_epochs=2000)

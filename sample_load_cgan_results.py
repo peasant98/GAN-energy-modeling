@@ -104,11 +104,11 @@ def combine_pickle_data(filenames_list, outfilename):
 
 
 #if __name__ == '__main__':
-def main(types, train_size):
+def main(types, train_size, gan_type='cgan'):
     # load the results
     # sample_load_results('gan_results2575.pickle')
     for i in range(50,2001,50):
-        basefilename = f'./results/cgan_results_trainsize{train_size}'
+        basefilename = f'./results/{gan_type}_results_trainsize{train_size}'
 
 
         # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'

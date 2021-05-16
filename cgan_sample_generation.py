@@ -91,8 +91,9 @@ def generate_fake_samples(generator, latent_dim, n_samples, n_classes):
 def summarize_performance(step, latent_dim, num_classes=4,
 						  train_size=100,
                           epochs=10,
-						  freq_dict={7: 400, 12: 4500, 14: 800, 15: 400}):
-    model_str = f'./h5/cgan_trainsize{train_size}_epochs{epochs}.h5'
+						  freq_dict={7: 400, 12: 4500, 14: 800, 15: 400},
+						  gan_type='cgan'):
+    model_str = f'./h5/{gan_type}_trainsize{train_size}_epochs{epochs}.h5'
 
     g_model = load_model(model_str)
 
@@ -112,10 +113,10 @@ def summarize_performance(step, latent_dim, num_classes=4,
         idx += 1
 
     # run prediction
-    prediction(zs, np.array(classes), g_model, filename=f'./results/cgan_results_trainsize{train_size}_epoch{epochs}.pickle')
+    prediction(zs, np.array(classes), g_model, filename=f'./results/{gan_type}_results_trainsize{train_size}_epoch{epochs}.pickle')
 
 
-def main(types, gens, num_train):
+def main(types, gens, num_train, gan_type='cgan'):
     config = ConfigProto()
     config.gpu_options.allow_growth = True
     session = InteractiveSession(config=config)
@@ -125,4 +126,5 @@ def main(types, gens, num_train):
     latent_dim = 1000
 
     for i in range(50, 2001, 50):
-        summarize_performance(i, latent_dim, num_classes=4, train_size=num_train, epochs=i)
+        summarize_performance(i, latent_dim, num_classes=4, train_size=num_train, epochs=i,
+							  gan_type=gan_type)
