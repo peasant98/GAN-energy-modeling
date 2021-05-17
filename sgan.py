@@ -82,13 +82,6 @@ def prediction(zs, c_model, g_model, filename):
 	print(preds)
 	final = denormalize(power_predictions, class_predictions, filename=filename)
 
-def get_result(c_model, g_model):
-	"""
-	gets the result by:
-	1. running the g_model on inputs to get a normalized value.
-	2. getting predictions via the c_model to get the predicted class.
-	"""
-	pass
 
 # custom activation function
 def custom_activation(output):
@@ -260,8 +253,6 @@ def summarize_performance(step, g_model, d_model, c_model, latent_dim, dataset, 
 
 	X_real, y_real = dataset
 	X, _ = generate_fake_samples_grid(g_model, latent_dim, n_samples)
-	# y1 = ones((2800, 1))
-	# y0 = zeros((2800, 1))
 
 	y1 = ones((n_samples, 1))
 	y0 = zeros((n_samples, 1))
@@ -339,9 +330,9 @@ def train(g_model, d_model, c_model, gan_model, dataset, latent_dim, n_epochs=31
 
 		print('>%d, c[%.3f,%.0f], d[%.3f,%.3f], g[%.3f]' % (i+1, c_loss, c_acc*100, d_loss1, d_loss2, g_loss))
 		if epoch % 50 == 0 and epoch > prev_epoch and epoch !=0:
-			# prev_epoch = epoch
-			# TIMES.append(total_time)
-			# print(f'Time after {epoch} epochs', total_time)
+			g_model.save(f'./h5/sgan_g_model_trainsize{amt}_epochs{i+1}.h5')
+			c_model.save(f'./h5/sgan_c_model_trainsize{amt}_epochs{i+1}.h5')
+
 			summarize_performance(epoch, g_model, d_model, c_model, latent_dim, dataset,
 								  num_train=num_train, n_samples=num_train*4)
 	# all_times = np.array(TIMES)
@@ -392,6 +383,6 @@ def main(types, num_train):
 	train(g_model, d_model, gan_model, dataset, latent_dim,
 			amt=num_train, num_classes=num_classes,
 			n_epochs=2000)
-    # train(g_model, d_model, c_model, gan_model, dataset, latent_dim,
-	# 	  amt=amt, num_train=amt,
-	# 	  n_epochs=1000)
+    train(g_model, d_model, c_model, gan_model, dataset, latent_dim,
+		  amt=amt, num_train=amt,
+		  n_epochs=2000)

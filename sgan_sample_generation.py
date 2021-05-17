@@ -20,7 +20,7 @@ SELECTED_CLASSES = [7, 12, 14, 15]
 TIMES = []
 
 
-def denormalize(power_predictions, class_predictions, csv_path='data_collect_maxmin.csv', filename='cgan_results.pickle'):
+def denormalize(power_predictions, class_predictions, csv_path='data_collect_maxmin.csv', filename='gan_results.pickle'):
 	df = pd.read_csv(csv_path)
 	final_arr = []
 	# results is a list of lists -- each entry contains building_type id, followed
@@ -35,19 +35,19 @@ def denormalize(power_predictions, class_predictions, csv_path='data_collect_max
 		final_arr.append([SELECTED_CLASSES[building_type], denormalized_val])
 
 	# convert to pickle file for now.
-	print(final_arr[0][1].shape)
 	with open(filename, 'wb') as handle:
 		pickle.dump(final_arr, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 	return final_arr
 
 
-def prediction(zs, classes, g_model, filename):
+def prediction(zs, c_model, g_model, filename):
 	# predict normalized value of generator with latent space as input.
 	results = []
-	normalized_val = g_model.predict([zs, classes])
+	normalized_val = g_model.predict(zs)
 	# predict class with normalized val
-	class_predictions = classes
+	building_type_id = c_model.predict(normalized_val)
+	class_predictions = np.argmax(building_type_id, axis=-1)
 	power_predictions = normalized_val.reshape(normalized_val.shape[0], normalized_val.shape[1])
 	preds = {}
 	for prediction in class_predictions:
@@ -55,9 +55,9 @@ def prediction(zs, classes, g_model, filename):
 			preds[prediction] += 1
 		else:
 			preds[prediction] = 1
-
+	print(preds)
 	final = denormalize(power_predictions, class_predictions, filename=filename)
-
+    return final
 
 # generate points in latent space as input for the generator
 def generate_latent_points_grid(latent_dim, n_samples):
@@ -89,31 +89,27 @@ def generate_fake_samples(generator, latent_dim, n_samples, n_classes):
 
 
 def summarize_performance(step, latent_dim, num_classes=4,
-						  train_size=100,
-                          epochs=10,
-						  freq_dict={7: 400, 12: 4500, 14: 800, 15: 400},
-						  gan_type='cgan'):
-    model_str = f'./h5/{gan_type}_trainsize{train_size}_epochs{epochs}.h5'
+						  num_train=400, gan_type='sgan',
+                          epochs=10):
 
-    g_model = load_model(model_str)
+    """
+    generate samples from sgan
+    """    
 
-    num_gen = 0
-    for val in freq_dict:
-        num_gen += (freq_dict[val])
-    zs, _ = generate_latent_points(latent_dim, num_gen, n_classes=num_classes)
-    # run some prediction
-	# compute classes
-    classes = []
+    g_model_str = f'./h5/{gan_type}_g_model_trainsize{train_size}_epochs{epochs}.h5'
 
-    idx = 0
-    for val in freq_dict:
-        print(val, freq_dict[val], idx)
-        for _ in range(freq_dict[val]):
-            classes.append(idx)
-        idx += 1
+    g_model = load_model(g_model_str)
 
-    # run prediction
-    prediction(zs, np.array(classes), g_model, filename=f'./results/{gan_type}_results_trainsize{train_size}_epoch{epochs}.pickle')
+    c_model_str = f'./h5/{gan_type}_c_model_trainsize{train_size}_epochs{epochs}.h5'
+
+    c_model = load_model(c_model_str)
+
+    freq_dict = {7: 400, 12: 4500, 14: 800, 15: 400}
+
+	for o in range(6):
+		zs = generate_latent_points_grid(latent_dim, int(1600*3.14))
+		# run some prediction
+		prediction(zs, c_model, g_model, filename=f'./results/{gan_type}_results_trainsize{num_train}_epoch{epochs}_iter{o}.pickle')
 
 
 def main(types, gens, num_train, gan_type='cgan'):
