@@ -359,4 +359,4 @@ def main(types, num_train):
 	# train model
 	train(g_model, d_model, c_model, gan_model, dataset, latent_dim,
 			amt=num_train, num_train=num_train,
-			n_epochs=2000)
+			n_epochs=100)
