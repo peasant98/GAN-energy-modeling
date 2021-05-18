@@ -119,7 +119,6 @@ def summarize_performance(step, latent_dim, num_classes=4,
 
 	for _ in range(34):
 
-		print(current_freq_dict)
 		if finished_generation(freq_dict, current_freq_dict):
 			break
 
