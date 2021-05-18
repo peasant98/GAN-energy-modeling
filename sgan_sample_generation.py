@@ -20,9 +20,10 @@ SELECTED_CLASSES = [7, 12, 14, 15]
 TIMES = []
 
 
-def denormalize(power_predictions, class_predictions, csv_path='data_collect_maxmin.csv', filename='gan_results.pickle'):
+def denormalize(power_predictions, class_predictions, csv_path='data_collect_maxmin.csv'):
 	df = pd.read_csv(csv_path)
 	final_arr = []
+
 	# results is a list of lists -- each entry contains building_type id, followed
 	# by the normalized val.
 	for idx, power_prediction in enumerate(power_predictions):
@@ -34,14 +35,11 @@ def denormalize(power_predictions, class_predictions, csv_path='data_collect_max
 		denormalized_val /= 2
 		final_arr.append([SELECTED_CLASSES[building_type], denormalized_val])
 
-	# convert to pickle file for now.
-	with open(filename, 'wb') as handle:
-		pickle.dump(final_arr, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 	return final_arr
 
 
-def prediction(zs, c_model, g_model, filename):
+def prediction(zs, c_model, g_model):
 	# predict normalized value of generator with latent space as input.
 	results = []
 	normalized_val = g_model.predict(zs)
@@ -56,8 +54,8 @@ def prediction(zs, c_model, g_model, filename):
 		else:
 			preds[prediction] = 1
 	print(preds)
-	final = denormalize(power_predictions, class_predictions, filename=filename)
-    return final
+	final = denormalize(power_predictions, class_predictions)
+	return final
 
 # generate points in latent space as input for the generator
 def generate_latent_points_grid(latent_dim, n_samples):
@@ -89,36 +87,76 @@ def generate_fake_samples(generator, latent_dim, n_samples, n_classes):
 
 
 def summarize_performance(step, latent_dim, num_classes=4,
-						  num_train=400, gan_type='sgan',
-                          epochs=10):
+						  num_train=400, train_size=100, gan_type='sgan',
+                          epochs=10, gen_dict=None):
 
-    """
-    generate samples from sgan
-    """    
+	"""
+	generate samples from sgan
+	"""    
 
-    g_model_str = f'./h5/{gan_type}_g_model_trainsize{train_size}_epochs{epochs}.h5'
+	g_model_str = f'./h5/{gan_type}_g_model_trainsize{train_size}_epochs{epochs}.h5'
 
-    g_model = load_model(g_model_str)
+	g_model = load_model(g_model_str)
 
-    c_model_str = f'./h5/{gan_type}_c_model_trainsize{train_size}_epochs{epochs}.h5'
+	c_model_str = f'./h5/{gan_type}_c_model_trainsize{train_size}_epochs{epochs}.h5'
 
-    c_model = load_model(c_model_str)
+	c_model = load_model(c_model_str)
 
-    freq_dict = {7: 400, 12: 4500, 14: 800, 15: 400}
+	if gen_dict is None:
+		freq_dict = {7: 400, 12: 4500, 14: 800, 15: 400}
+	else:
+		freq_dict = gen_dict
 
-	for o in range(6):
-		zs = generate_latent_points_grid(latent_dim, int(1600*3.14))
+	all_predictions = []
+	filename = f'./results/{gan_type}_results_trainsize{num_train}_epoch{epochs}.pickle'
+
+	if gen_dict is None:
+		current_freq_dict = {7: 0, 12: 0, 14: 0, 15: 0}
+	else:
+		current_freq_dict = {}
+		for key in gen_dict:
+			current_freq_dict[key] = 0
+
+	for _ in range(20):
+
+		if finished_generation(freq_dict, current_freq_dict):
+			break
+
+		zs = generate_latent_points_grid(latent_dim, 1600)
 		# run some prediction
-		prediction(zs, c_model, g_model, filename=f'./results/{gan_type}_results_trainsize{num_train}_epoch{epochs}_iter{o}.pickle')
+		predictions = prediction(zs, c_model, g_model)
+		for entry in predictions:
+			building_type = entry[0]
+
+			if current_freq_dict[building_type] < freq_dict[building_type]:
+				all_predictions.append(entry)
+				current_freq_dict[building_type] += 1
+	
+
+	with open(filename, 'wb') as handle:
+		pickle.dump(all_predictions, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+def finished_generation(desired_dict, current_dict):
+	for key in desired_dict:
+		if desired_dict[key] != current_dict[key]:
+			return False
+	
+	return True
 
 
-def main(types, gens, num_train, gan_type='cgan'):
-    config = ConfigProto()
-    config.gpu_options.allow_growth = True
-    session = InteractiveSession(config=config)
+def main(types, gens, num_train, gan_type='sgan'):
+	config = ConfigProto()
+	config.gpu_options.allow_growth = True
+	session = InteractiveSession(config=config)
+	# construct types to amount to generate dictionary
 
-    latent_dim = 1000
+	gen_dict = {}
+	for idx in range(len(types)):
+		gen_dict[types[idx]] = gens[idx]
 
-    for i in range(50, 2001, 50):
-        summarize_performance(i, latent_dim, num_classes=4, train_size=num_train, epochs=i,
-							  gan_type=gan_type)
+
+	latent_dim = 1000
+
+	for i in range(50, 2001, 50):
+		summarize_performance(i, latent_dim, num_classes=4, train_size=num_train, epochs=i,
+								gan_type=gan_type, gen_dict=gen_dict)
