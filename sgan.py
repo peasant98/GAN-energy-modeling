@@ -31,8 +31,8 @@ tf.executing_eagerly()
 import pickle
 
 import time
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+from tensorflow import ConfigProto
+from tensorflow import InteractiveSession
 
 import pandas as pd
 
@@ -293,7 +293,7 @@ def summarize_performance(step, g_model, d_model, c_model, latent_dim, dataset, 
 
 # train the generator and discriminator
 def train(g_model, d_model, c_model, gan_model, dataset, latent_dim, n_epochs=310, n_batch=32,
-		  amt=400, num_train=400):
+		  amt=100, num_train=100):
 	total_time = 0
 
 	# select supervised dataset
@@ -333,34 +333,13 @@ def train(g_model, d_model, c_model, gan_model, dataset, latent_dim, n_epochs=31
 			g_model.save(f'./h5/sgan_g_model_trainsize{amt}_epochs{i+1}.h5')
 			c_model.save(f'./h5/sgan_c_model_trainsize{amt}_epochs{i+1}.h5')
 
-			summarize_performance(epoch, g_model, d_model, c_model, latent_dim, dataset,
-								  num_train=num_train, n_samples=num_train*4)
+			# summarize_performance(epoch, g_model, d_model, c_model, latent_dim, dataset,
+			# 					  num_train=num_train, n_samples=num_train*4)
 	# all_times = np.array(TIMES)
 	# # g_model.save(f'sgan_size{amt}.h5')
 	# np.savetxt(f'sgan_trainsize{num_train}_times.txt', all_times)
 	print(f'Time for {n_batch} batch size, {n_epochs} epochs, total time is {total_time}')
 
-
-if __name__ == '__main__':
-	# size of the latent space
-
-	latent_dim = 1000
-	# create the discriminator models
-	amt = 400
-	d_model, c_model = define_discriminator(n_classes=4)
-
-	# create the generator
-	g_model = define_generator(latent_dim)
-
-
-	# create the gan
-	gan_model = define_gan(g_model, d_model)
-	# load image data
-	dataset = load_real_samples_grid(num_types=4)
-	# train model
-	train(g_model, d_model, c_model, gan_model, dataset, latent_dim,
-		  amt=amt, num_train=amt,
-		  n_epochs=1000)
 
 
 def main(types, num_train):
@@ -368,11 +347,11 @@ def main(types, num_train):
 	config.gpu_options.allow_growth = True
 	session = InteractiveSession(config=config)
 
-    # size of the latent space
+	# size of the latent space
 	latent_dim = 1000
 	# create the discriminator
 	num_classes = len(types)
-	d_model = define_discriminator(n_classes=num_classes)
+	d_model, c_model = define_discriminator(n_classes=num_classes)
 	# create the generator
 	g_model = define_generator(latent_dim)
 	# create the gan
@@ -380,9 +359,6 @@ def main(types, num_train):
 	# load image data
 	dataset = load_real_samples_grid(num_types=num_classes, num_per_type=num_train)
 	# train model
-	train(g_model, d_model, gan_model, dataset, latent_dim,
-			amt=num_train, num_classes=num_classes,
+	train(g_model, d_model, c_model, gan_model, dataset, latent_dim,
+			amt=num_train, num_train=num_train,
 			n_epochs=2000)
-    train(g_model, d_model, c_model, gan_model, dataset, latent_dim,
-		  amt=amt, num_train=amt,
-		  n_epochs=2000)
