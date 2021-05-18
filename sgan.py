@@ -330,11 +330,10 @@ def train(g_model, d_model, c_model, gan_model, dataset, latent_dim, n_epochs=31
 
 		print('>%d, c[%.3f,%.0f], d[%.3f,%.3f], g[%.3f]' % (i+1, c_loss, c_acc*100, d_loss1, d_loss2, g_loss))
 		if epoch % 50 == 0 and epoch > prev_epoch and epoch !=0:
-			g_model.save(f'./h5/sgan_g_model_trainsize{amt}_epochs{i+1}.h5')
-			c_model.save(f'./h5/sgan_c_model_trainsize{amt}_epochs{i+1}.h5')
+			g_model.save(f'./h5/sgan_g_model_trainsize{amt}_epochs{epoch}.h5')
+			c_model.save(f'./h5/sgan_c_model_trainsize{amt}_epochs{epoch}.h5')
 
-			# summarize_performance(epoch, g_model, d_model, c_model, latent_dim, dataset,
-			# 					  num_train=num_train, n_samples=num_train*4)
+
 	# all_times = np.array(TIMES)
 	# # g_model.save(f'sgan_size{amt}.h5')
 	# np.savetxt(f'sgan_trainsize{num_train}_times.txt', all_times)

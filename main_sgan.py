@@ -1,5 +1,5 @@
 import sgan
-import cgan_sample_generation as gener
+import sgan_sample_generation as gener
 import sample_load_cgan_results as csv_gener
 import r2_summary_cgan as r2
 import shutil
@@ -23,10 +23,10 @@ for i in [3, 10]:
         gener.main(types, gens, num_train)
         print('complete_'+str(i)+'_gan_generation_pickle')
 
-        csv_gener.main(types, num_train)
+        csv_gener.main(types, num_train, gan_type='sgan')
         print('complete_'+str(i)+'_gan_generation_csv')
 
-        r2.main(types, num_train, j)
+        r2.main(types, num_train, j, gan_type='sgan')
         print('complete_'+str(i)+'_gan_r2')
         shutil.rmtree('./results')
         os.mkdir('./results')
