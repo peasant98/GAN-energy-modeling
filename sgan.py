@@ -26,7 +26,6 @@ from keras.utils import np_utils
 from matplotlib import pyplot
 from keras import backend
 import tensorflow as tf
-tf.executing_eagerly()
 
 import pickle
 
