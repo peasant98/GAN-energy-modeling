@@ -27,8 +27,8 @@ import pickle
 
 
 import time
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
+from tensorflow import ConfigProto
+from tensorflow import InteractiveSession
 
 import pandas as pd
 
@@ -184,27 +184,45 @@ def define_gan(g_model, d_model, q_model):
 	model.compile(loss=['binary_crossentropy', 'categorical_crossentropy'], optimizer=opt)
 	return model
 
-def load_real_samples_grid():
+def load_real_samples_grid(num_types=4, num_per_type=100):
 	# load the REAL data.
-    f = open('./data_collect_select_equal.csv','r')
-    lines = f.readlines()
-    f.close()
-    X_temp = []
-    y_temp = []
-    for i in range(1,len(lines)):
-        y_temp.append(int(lines[i].split(',')[-1].replace('\n','')))
-        X_temp_temp = []
-        for j in range(1,len(lines[i].split(','))-1):
-            val = float(lines[i].split(',')[j].replace('\n',''))
-            X_temp_temp.append(val)
-        X_temp.append(X_temp_temp)
-    trainy = asarray(y_temp)
-    trainX = asarray(X_temp)
-    # expand to 3d, e.g. add channels
-    X1 = expand_dims(trainX, axis=-1)
-    X = expand_dims(X1, axis=-1)
-    print(X.shape, trainy.shape)
-    return [X, trainy]
+	f = open('./data_collect_select_equal.csv','r')
+	lines = f.readlines()
+	f.close()
+	X_temp = []
+	y_temp = []
+	for i in range(1,len(lines)):
+		y_temp.append(int(lines[i].split(',')[-1].replace('\n','')))
+		X_temp_temp = []
+		for j in range(1,len(lines[i].split(','))-1):
+			val = float(lines[i].split(',')[j].replace('\n',''))
+			X_temp_temp.append(val)
+		X_temp.append(X_temp_temp)
+	trainy = asarray(y_temp)
+	trainX = asarray(X_temp)
+	# expand to 3d, e.g. add channels
+	X1 = expand_dims(trainX, axis=-1)
+	X = expand_dims(X1, axis=-1)
+	print(X.shape, trainy.shape)
+
+	dataset = [X, trainy]
+	new_X = []
+	new_trainy = []
+
+	types_dict = {}
+	for i in range(num_types):
+		types_dict[i] = 0
+
+	current_type_idx = 0
+	for idx, val in enumerate(dataset[0]):
+		if dataset[1][idx] == current_type_idx:
+			types_dict[current_type_idx] += 1
+			new_X.append(val)
+			new_trainy.append(dataset[1][idx])
+			if types_dict[current_type_idx] == num_per_type:
+				current_type_idx += 1
+
+	return [np.array(new_X), np.array(new_trainy)]
 
 # select real samples
 def generate_real_samples(dataset, n_samples):
@@ -286,72 +304,70 @@ def summarize_performance(step, g_model, gan_model, latent_dim, n_cat, n_samples
 	[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
 								  			 return_classes=True,
 											   generate_eval=True)
-	prediction(z, classes, g_model, f'info_gan_trainsize{trainsize}_epoch{step}.pickle')
+	prediction(z, classes, g_model, f'info_gan_trainsize{trainsize}_epochs{step}.pickle')
 
 
 # train the generator and discriminator
 def train(g_model, d_model, gan_model, dataset, latent_dim, n_cat, n_epochs=300, n_batch=32,
 		  amt=400):
-	total_time = 0
+    total_time = 0
 
-	# calculate the number of batches per training epoch
-	bat_per_epo = int(dataset[0].shape[0] / n_batch)
-	# calculate the number of training iterations
-	n_steps = bat_per_epo * n_epochs
-	# calculate the size of half a batch of samples
-	half_batch = int(n_batch / 2)
-	# manually enumerate epochs
-	for i in range(n_epochs):
+    # calculate the number of batches per training epoch
+    bat_per_epo = int(dataset[0].shape[0] / n_batch)
+    # calculate the number of training iterations
+    n_steps = bat_per_epo * n_epochs
+    # calculate the size of half a batch of samples
+    half_batch = int(n_batch / 2)
+    # manually enumerate epochs
+    for i in range(n_epochs):
 
-		begin = time.time()
+        begin = time.time()
 
-		for j in range(bat_per_epo):
-			# get randomly selected 'real' samples
-			X_real, y_real = generate_real_samples(dataset, half_batch)
-			# update discriminator and q model weights
-			d_loss1 = d_model.train_on_batch(X_real, y_real)
-			# generate 'fake' examples
-			X_fake, y_fake = generate_fake_samples(g_model, latent_dim, n_cat, half_batch)
-			# update discriminator model weights
-			d_loss2 = d_model.train_on_batch(X_fake, y_fake)
-			# prepare points in latent space as input for the generator
-			z_input, cat_codes = generate_latent_points(latent_dim, n_cat, n_batch)
-			# create inverted labels for the fake samples
-			y_gan = ones((n_batch, 1))
-			# update the g via the d and q error
-			_,g_1,g_2 = gan_model.train_on_batch(z_input, [y_gan, cat_codes])
-			# summarize loss on this batch
-		print('>%d, d[%.3f,%.3f], g[%.3f] q[%.3f]' % (i+1, d_loss1, d_loss2, g_1, g_2))
-		# evaluate the model performance every 'epoch'
-		total_time += (time.time() - begin)
+        for j in range(bat_per_epo):
+            # get randomly selected 'real' samples
+            X_real, y_real = generate_real_samples(dataset, half_batch)
+            # update discriminator and q model weights
+            d_loss1 = d_model.train_on_batch(X_real, y_real)
+            # generate 'fake' examples
+            X_fake, y_fake = generate_fake_samples(g_model, latent_dim, n_cat, half_batch)
+            # update discriminator model weights
+            d_loss2 = d_model.train_on_batch(X_fake, y_fake)
+            # prepare points in latent space as input for the generator
+            z_input, cat_codes = generate_latent_points(latent_dim, n_cat, n_batch)
+            # create inverted labels for the fake samples
+            y_gan = ones((n_batch, 1))
+            # update the g via the d and q error
+            _,g_1,g_2 = gan_model.train_on_batch(z_input, [y_gan, cat_codes])
+            # summarize loss on this batch
+        print('>%d, d[%.3f,%.3f], g[%.3f] q[%.3f]' % (i+1, d_loss1, d_loss2, g_1, g_2))
+        # evaluate the model performance every 'epoch'
+        total_time += (time.time() - begin)
 
-		if (i+1) % 50 == 0:
-			print(f'Time after {i+1} epochs', total_time)
-			TIMES.append(total_time)
-			summarize_performance(i, g_model, gan_model, latent_dim, n_cat,
-								  trainsize=amt)
-
-	all_times = np.array(TIMES)
-	# g_model.save(f'cgan_size{amt}.h5')
-	np.savetxt(f'infogan_trainsize{amt}_times.txt', all_times)
+        if (i+1) % 50 == 0:
+            # summarize_performance(i, g_model, gan_model, latent_dim, n_cat,
+            #                         trainsize=amt)
+            g_model.save(f'./h5/infogan_trainsize{amt}_epochs{i+1}.h5')
 
 
 
-if __name__ == '__main__':
-	# number of values for the categorical control code
-	# this value doesn't necessarily mean class!
-	n_cat = 4
-	# size of the latent space
-	latent_dim = 1000
-	# create the discriminator
-	d_model, q_model = define_discriminator(n_cat)
-	# create the generator
-	gen_input_size = latent_dim + n_cat
-	g_model = define_generator(gen_input_size)
-	# create the gan
-	gan_model = define_gan(g_model, d_model, q_model)
-	# load image data
-	dataset = load_real_samples_grid()
-	# train model
-	train(g_model, d_model, gan_model, dataset, latent_dim, n_cat,
-		  amt=400, n_epochs=1000)
+def main(types, num_train):
+    config = ConfigProto()
+    config.gpu_options.allow_growth = True
+    session = InteractiveSession(config=config)
+
+    # size of the latent space
+    latent_dim = 1000
+    # create the discriminator
+    n_cat = len(types)
+    d_model, q_model = define_discriminator(n_cat)
+    # create the generator
+    gen_input_size = latent_dim + n_cat
+    g_model = define_generator(gen_input_size)
+    # create the gan
+    gan_model = define_gan(g_model, d_model, q_model)
+    # load image data
+    dataset = load_real_samples_grid(num_types=n_cat, num_per_type=num_train)
+    # train model
+    train(g_model, d_model, gan_model, dataset, latent_dim,
+          n_cat, amt=num_train,
+          n_epochs=2000)
