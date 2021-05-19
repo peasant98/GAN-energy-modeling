@@ -117,11 +117,11 @@ def main(types, train_size, gan_type='cgan'):
             for perm in keys_permutations:
                 # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
                 pickle_name = '{basefilename}_epoch{i}_perm{perm_name}.pickle'.format(basefilename=basefilename,
-                                                                        i=i, perm_name=perm)
+                                                                        i=i, perm_name=list(perm))
 
                 # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
                 outcsvname = '{basefilename}_epochs{i}_perm{perm_name}.csv'.format(basefilename=basefilename, i=i,
-                                                                                   perm_name=perm)
+                                                                                   perm_name=list(perm))
 
                 convert_results_pickle_to_csv(pickle_name, outfilename=outcsvname)
 

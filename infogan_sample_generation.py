@@ -128,7 +128,7 @@ def generate_fake_samples(generator, latent_dim, n_samples, n_classes):
 
 
 def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_samples=1600,
-						  trainsize=400, gen_dict=None, keys=[7,12,14,15]):
+						  gen_dict=None, keys=[7,12,14,15]):
 
 	# generate some samples
 	g_model_str = f'./h5/infogan_trainsize{train_size}_epochs{epochs}.h5'
@@ -142,7 +142,7 @@ def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_s
 		[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
 												return_classes=True,
 												generate_eval=True, freq_dict=gen_dict, keys=list(perm))
-		prediction(z, classes, g_model, f'./results/infogan_results_trainsize{trainsize}_epoch{epochs}_perm{perm}.pickle')
+		prediction(z, classes, g_model, f'./results/infogan_results_trainsize{train_size}_epoch{epochs}_perm{perm}.pickle')
 
 
 def main(types, gens, num_train):
