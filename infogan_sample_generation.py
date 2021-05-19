@@ -8,6 +8,7 @@ from keras.utils import to_categorical
 import pickle
 import pandas as pd
 import numpy as np
+import itertools
 
 # from tensorflow.compat.v1 import ConfigProto
 # from tensorflow.compat.v1 import InteractiveSession
@@ -75,7 +76,8 @@ def generate_latent_points_grid(latent_dim, n_samples):
 def generate_latent_points(latent_dim, n_cat, n_samples,
 						   return_classes=False,
 						   freq_dict={7: 400, 12: 4500, 14: 800, 15: 400},
-						   generate_eval=False):
+						   generate_eval=False,
+						   keys=[7,12,14,15]):
 
 	# generate points in the latent space
 	if freq_dict is None:
@@ -92,7 +94,7 @@ def generate_latent_points(latent_dim, n_cat, n_samples,
 		# generate categorical codes
 		cat_codes = []
 		cur_code = 0
-		keys = sorted([val for val in freq_dict])
+
 		for key in keys:
 			for _ in range(freq_dict[key]):
 				cat_codes.append(cur_code)
@@ -126,16 +128,22 @@ def generate_fake_samples(generator, latent_dim, n_samples, n_classes):
 
 
 def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_samples=1600,
-						  trainsize=400, gen_dict=None):
+						  trainsize=400, gen_dict=None, keys=[7,12,14,15]):
 
 	# generate some samples
 	g_model_str = f'./h5/infogan_trainsize{train_size}_epochs{epochs}.h5'
 
 	g_model = load_model(g_model_str)
-	[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
-								  			 return_classes=True,
-											   generate_eval=True, freq_dict=gen_dict)
-	prediction(z, classes, g_model, f'./results/infogan_results_trainsize{trainsize}_epoch{epochs}.pickle')
+
+	# create multiple files for different ordering of control codes
+	keys_permutations = list(itertools.permutations(keys))
+	for perm in keys_permutations:
+
+		[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
+												return_classes=True,
+												generate_eval=True, freq_dict=gen_dict, keys=list(perm))
+		prediction(z, classes, g_model, f'./results/infogan_results_trainsize{trainsize}_epoch{epochs}_perm{perm}.pickle')
+
 
 def main(types, gens, num_train):
 	config = ConfigProto()
@@ -152,4 +160,4 @@ def main(types, gens, num_train):
 
 	for i in range(50, 2001, 50):
 		summarize_performance(i, latent_dim, n_cat=n_cat, train_size=num_train, epochs=i,
-							  gen_dict=gen_dict)
+							  gen_dict=gen_dict, keys=types)
