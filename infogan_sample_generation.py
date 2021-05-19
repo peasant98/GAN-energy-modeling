@@ -92,7 +92,7 @@ def generate_latent_points(latent_dim, n_cat, n_samples,
 		# generate categorical codes
 		cat_codes = []
 		cur_code = 0
-		keys = sorted([val in freq_dict])
+		keys = sorted([val for val in freq_dict])
 		for key in keys:
 			for _ in range(freq_dict[key]):
 				cat_codes.append(cur_code)
@@ -132,7 +132,7 @@ def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_s
 	g_model_str = f'./h5/infogan_trainsize{train_size}_epochs{epochs}.h5'
 
 	g_model = load_model(g_model_str)
-	[z, _], classes = generate_latent_points(step, latent_dim, n_cat, n_samples,
+	[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
 								  			 return_classes=True,
 											   generate_eval=True, freq_dict=gen_dict)
 	prediction(z, classes, g_model, f'./results/infogan_results_trainsize{trainsize}_epoch{epochs}.pickle')
