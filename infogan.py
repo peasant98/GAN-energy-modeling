@@ -108,36 +108,7 @@ def define_discriminator(n_cat, in_shape=(744,1,1)):
 	# create q model layers
 	q = Dense(128)(fe)
 	q = BatchNormalization()(q)
-	q = LeakyReLU(alpha=0.1)(q)
-	# q model output
-	out_codes = Dense(n_cat, activation='softmax')(q)
-	# define q model
-	q_model = Model(in_image, out_codes)
-
-	# downsample to 14x14
-	# d = Conv2D(64, (4,4), strides=(2,1), padding='same')(in_image)
-	# d = LeakyReLU(alpha=0.1)(d)
-	# # downsample to 7x7
-	# d = Conv2D(128, (4,4), strides=(2,1), padding='same')(d)
-	# d = LeakyReLU(alpha=0.1)(d)
-	# d = BatchNormalization()(d)
-	# # normal
-	# d = Conv2D(256, (4,4), padding='same')(d)
-	# d = LeakyReLU(alpha=0.1)(d)
-	# d = BatchNormalization()(d)
-	# # flatten feature maps
-	# d = Flatten()(d)
-
-	# real/fake output, probability of being fake or not
-	out_classifier = Dense(1, activation='sigmoid')(q)
-	# define d model
-	d_model = Model(in_image, out_classifier)
-	# compile discriminator model
-	d_model.compile(loss='binary_crossentropy', optimizer=Adam(lr=0.0002, beta_1=0.5))
-	# create q model layers
-	q = Dense(128)(q)
-	q = BatchNormalization()(q)
-	q = LeakyReLU(alpha=0.1)(q)
+	q = LeakyReLU(alpha=0.2)(q)
 	# q model output
 	out_codes = Dense(n_cat, activation='softmax')(q)
 	# define q model
