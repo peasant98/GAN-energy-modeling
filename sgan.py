@@ -135,7 +135,6 @@ def define_generator(latent_dim):
 	# upsample to 28x28
 	gen = Conv2DTranspose(128, (4,4), strides=(2,1), padding='same')(gen)
 	gen = LeakyReLU(alpha=0.2)(gen)
-	# output
 	out_layer = Conv2D(1, (7,7), activation='tanh', padding='same')(gen)
 	# define model
 	model = Model(in_lat, out_layer)
