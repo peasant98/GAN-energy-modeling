@@ -108,7 +108,7 @@ def summarize_performance(step, latent_dim, num_classes=4,
 		freq_dict = gen_dict
 
 	all_predictions = []
-	filename = f'./results/{gan_type}_results_trainsize{num_train}_epoch{epochs}.pickle'
+	filename = f'./results/{gan_type}_results_trainsize{train_size}_epoch{epochs}.pickle'
 
 	if gen_dict is None:
 		current_freq_dict = {7: 0, 12: 0, 14: 0, 15: 0}
