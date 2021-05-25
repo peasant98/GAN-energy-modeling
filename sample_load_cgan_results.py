@@ -114,7 +114,7 @@ def main(types, train_size, gan_type='cgan'):
             basefilename = f'./results/{gan_type}_results_trainsize{train_size}'
 
             keys_permutations = list(itertools.permutations(types))
-            keys_permutations = [[types]]
+            keys_permutations = [types]
             for perm in keys_permutations:
                 # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
                 pickle_name = '{basefilename}_epoch{i}_perm{perm_name}.pickle'.format(basefilename=basefilename,

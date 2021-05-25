@@ -137,7 +137,7 @@ def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_s
 
 	# create multiple files for different ordering of control codes
 	keys_permutations = list(itertools.permutations(keys))
-	keys_permutations = [[keys]]
+	keys_permutations = [keys]
 	for perm in keys_permutations:
 		list_perm = list(perm)
 		[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
