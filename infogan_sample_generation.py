@@ -24,25 +24,29 @@ TIMES = []
 
 
 def denormalize(power_predictions, class_predictions, csv_path='data_collect_maxmin.csv', filename='gan_results.pickle'):
-    df = pd.read_csv(csv_path)
-    final_arr = []
-    # results is a list of lists -- each entry contains building_type id, followed
-    # by the normalized val.
-    for idx, power_prediction in enumerate(power_predictions):
-        building_type = int(class_predictions[idx])
-        row = df.values[SELECTED_CLASSES[building_type]]
-        max_val = row[1]
-        min_val = row[2]
-        denormalized_val = power_prediction * (max_val - min_val) + (max_val + min_val)
-        denormalized_val /= 2
-        final_arr.append([SELECTED_CLASSES[building_type], denormalized_val])
+	df = pd.read_csv(csv_path)
+	# results is a list of lists -- each entry contains building_type id, followed
+	# by the normalized val.
 
-    # convert to pickle file for now.
-    print(final_arr[0][1].shape)
-    with open(filename, 'wb') as handle:
-        pickle.dump(final_arr, handle, protocol=pickle.HIGHEST_PROTOCOL)
+	class_permutations = list(itertools.permutations(SELECTED_CLASSES))
 
-    return final_arr
+	for class_permutation in class_permutations:
+		final_arr = []
+
+		for idx, power_prediction in enumerate(power_predictions):
+			building_type = int(class_predictions[idx])
+			row = df.values[class_permutation[building_type]]
+			max_val = row[1]
+			min_val = row[2]
+			denormalized_val = power_prediction * (max_val - min_val) + (max_val + min_val)
+			denormalized_val /= 2
+			final_arr.append([class_permutation[building_type], denormalized_val])
+
+		# convert to pickle file for now.
+		with open(f'perm{class_permutation}_{filename}', 'wb') as handle:
+			pickle.dump(final_arr, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+	return final_arr
 
 
 def prediction(zs, classes, g_model, filename):
@@ -143,7 +147,7 @@ def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_s
 		[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
 												return_classes=True,
 												generate_eval=True, freq_dict=gen_dict, keys=list_perm)
-		prediction(z, classes, g_model, f'./results/infogan_results_trainsize{train_size}_epoch{epochs}_perm{list_perm}.pickle')
+		prediction(z, classes, g_model, f'./results/infogan_results_trainsize{train_size}_epoch{epochs}.pickle')
 
 
 def main(types, gens, num_train):

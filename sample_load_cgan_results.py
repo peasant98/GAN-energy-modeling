@@ -111,18 +111,17 @@ def main(types, train_size, gan_type='cgan'):
     if gan_type == 'infogan':
 
         for i in range(50,2001,50):
-            basefilename = f'./results/{gan_type}_results_trainsize{train_size}'
 
             keys_permutations = list(itertools.permutations(types))
-            keys_permutations = [types]
             for perm in keys_permutations:
+                basefilename = f'./results/perm{perm}_{gan_type}_results_trainsize{train_size}'
+
                 # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
-                pickle_name = '{basefilename}_epoch{i}_perm{perm_name}.pickle'.format(basefilename=basefilename,
-                                                                        i=i, perm_name=list(perm))
+                pickle_name = '{basefilename}_epoch{i}.pickle'.format(basefilename=basefilename,
+                                                                        i=i)
 
                 # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
-                outcsvname = '{basefilename}_epochs{i}_perm{perm_name}.csv'.format(basefilename=basefilename, i=i,
-                                                                                   perm_name=list(perm))
+                outcsvname = '{basefilename}_epochs{i}.csv'.format(basefilename=basefilename, i=i)
 
                 convert_results_pickle_to_csv(pickle_name, outfilename=outcsvname)
 
