@@ -89,10 +89,13 @@ def define_discriminator(n_cat, in_shape=(744,1,1)):
 	in_image = Input(shape=in_shape)
 
 
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(in_image)
+	fe = Conv2D(128, (3,3), strides=(2, 1), padding='same')(in_image)
 	fe = LeakyReLU(alpha=0.2)(fe)
 
-	fe = Conv2D(128, (3,3), strides=(2,2), padding='same')(fe)
+	fe = Conv2D(128, (3,3), strides=(2, 1), padding='same')(fe)
+	fe = LeakyReLU(alpha=0.2)(fe)
+	
+	fe = Conv2D(128, (3,3), strides=(2, 1), padding='same')(fe)
 	fe = LeakyReLU(alpha=0.2)(fe)
 
 	fe = Flatten()(fe)
