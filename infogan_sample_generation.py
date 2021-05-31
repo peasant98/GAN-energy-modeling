@@ -43,7 +43,7 @@ def denormalize(power_predictions, class_predictions, csv_path='data_collect_max
 			final_arr.append([class_permutation[building_type], denormalized_val])
 
 		# convert to pickle file for now.
-		with open(f'perm{class_permutation}_{filename}', 'wb') as handle:
+		with open(f'./results/perm{class_permutation}_{filename}', 'wb') as handle:
 			pickle.dump(final_arr, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 	return final_arr
@@ -147,7 +147,7 @@ def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_s
 		[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
 												return_classes=True,
 												generate_eval=True, freq_dict=gen_dict, keys=list_perm)
-		prediction(z, classes, g_model, f'./results/infogan_results_trainsize{train_size}_epoch{epochs}.pickle')
+		prediction(z, classes, g_model, f'infogan_results_trainsize{train_size}_epoch{epochs}.pickle')
 
 
 def main(types, gens, num_train):
