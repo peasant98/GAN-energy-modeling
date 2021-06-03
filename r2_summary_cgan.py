@@ -124,6 +124,7 @@ def main(types, train_size, i, gan_type='cgan'):
         for gan_type in [gan_type]:
             final_table = []
             keys_permutations = list(itertools.permutations(types))
+            keys_permutations = [types]
             for perm in keys_permutations:
                 list_perm = list(perm)
                 for epochs in range(50,2001,50):
