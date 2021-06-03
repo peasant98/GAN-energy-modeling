@@ -113,6 +113,7 @@ def main(types, train_size, gan_type='cgan'):
         for i in range(50,2001,50):
 
             keys_permutations = list(itertools.permutations(types))
+            keys_permutations = [types]
             for perm in keys_permutations:
                 basefilename = f'./results/perm{perm}_{gan_type}_results_trainsize{train_size}'
 

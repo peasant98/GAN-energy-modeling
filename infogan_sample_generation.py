@@ -29,7 +29,7 @@ def denormalize(power_predictions, class_predictions, csv_path='data_collect_max
 	# by the normalized val.
 
 	class_permutations = list(itertools.permutations(SELECTED_CLASSES))
-
+	class_permutations = [SELECTED_CLASSES]
 	for class_permutation in class_permutations:
 		final_arr = []
 
