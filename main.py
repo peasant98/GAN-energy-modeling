@@ -17,7 +17,7 @@ for i in range(1,11):
     gan.main(types, gens, num_train)
     print('complete_'+str(i)+'_gan_training')
     
-    for j in range(1,6):
+    for j in range(1,2):
         if not os.path.isdir('./'+str(j)+'_csv'):
             os.mkdir('./'+str(j)+'_csv')
         gener.main(types, gens, num_train)
