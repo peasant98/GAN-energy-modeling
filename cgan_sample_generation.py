@@ -123,7 +123,7 @@ def main(types, gens, num_train, gan_type='cgan'):
 
 	latent_dim = 1000
 	freq_dict = {}
-	for idx, val in types:
+	for idx, val in enumerate(types):
 		freq_dict[val] = gens[idx]
 
 	n_classes = len(types)
