@@ -5,8 +5,8 @@ import r2_summary_cgan as r2
 import shutil
 import os
 
-types = [7, 12, 14, 15]
-gens = [400, 4500, 800, 400]
+types = [7, 12, 14, 15, 9, 5]
+gens = [400, 4500, 800, 400, 200, 250]
 if not os.path.isdir('./h5'):
     os.mkdir('./h5')
 if not os.path.isdir('./results'):
