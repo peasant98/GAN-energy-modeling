@@ -14,7 +14,7 @@ import numpy as np
 from tensorflow import ConfigProto
 from tensorflow import InteractiveSession
 
-SELECTED_CLASSES = [7, 12, 14, 15]
+SELECTED_CLASSES = [7, 12, 14, 15, 9, 5]
 # SELECTED_CLASSES = [4, 5, 9, 10]
 
 TIMES = []
