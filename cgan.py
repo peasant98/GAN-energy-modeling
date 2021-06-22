@@ -25,7 +25,7 @@ from tensorflow import InteractiveSession
 import pandas as pd
 
 
-SELECTED_CLASSES = [7, 12, 14, 15]
+SELECTED_CLASSES = [7, 12, 14, 15, 9, 5]
 
 TIMES = []
 

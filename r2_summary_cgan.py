@@ -119,7 +119,7 @@ def calculate(path_csv_list,gan_type,train_size,epochs,label_list):
     return summary
 
 def main(types, train_size, i, gan_type='cgan'):
-    types = [7, 12, 14, 15]
+    # types = [7, 12, 14, 15]
     if gan_type == 'infogan':
         for gan_type in [gan_type]:
             final_table = []

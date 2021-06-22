@@ -14,7 +14,7 @@ import numpy as np
 from tensorflow import ConfigProto
 from tensorflow import InteractiveSession
 
-SELECTED_CLASSES = [7, 12, 14, 15]
+SELECTED_CLASSES = [7, 12, 14, 15, 9, 5]
 # SELECTED_CLASSES = [4, 5, 9, 10]
 
 TIMES = []
@@ -117,12 +117,16 @@ def summarize_performance(step, latent_dim, num_classes=4,
 
 
 def main(types, gens, num_train, gan_type='cgan'):
-    config = ConfigProto()
-    config.gpu_options.allow_growth = True
-    session = InteractiveSession(config=config)
+	config = ConfigProto()
+	config.gpu_options.allow_growth = True
+	session = InteractiveSession(config=config)
 
-    latent_dim = 1000
+	latent_dim = 1000
+	freq_dict = {}
+	for idx, val in enumerate(types):
+		freq_dict[val] = gens[idx]
 
-    for i in range(50, 2001, 50):
-        summarize_performance(i, latent_dim, num_classes=4, train_size=num_train, epochs=i,
-							  gan_type=gan_type)
+	n_classes = len(types)
+	for i in range(50, 2001, 50):
+		summarize_performance(i, latent_dim, num_classes=n_classes, train_size=num_train, epochs=i,
+								gan_type=gan_type, freq_dict=freq_dict)
