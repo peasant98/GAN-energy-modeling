@@ -17,7 +17,7 @@ if __name__ == '__main__':
     new_df = pd.DataFrame()
     individual_dfs = []
     # label_set = [7, 12, 14, 15, 4, 5, 9, 10]
-    label_set = [7, 12, 14, 15, 9, 5]
+    label_set = [7, 12, 14, 15]
 
     amts = [40, 450, 80, 40, 20, 4, 25, 20, 10]
 

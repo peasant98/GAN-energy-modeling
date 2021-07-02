@@ -25,7 +25,7 @@ from tensorflow import InteractiveSession
 import pandas as pd
 
 
-SELECTED_CLASSES = [7, 12, 14, 15, 9, 5]
+SELECTED_CLASSES = [7, 12, 14, 15]
 
 TIMES = []
 
@@ -196,6 +196,7 @@ def load_real_samples_grid(num_types=4, num_per_type=100):
 			new_trainy.append(dataset[1][idx])
 			if types_dict[current_type_idx] == num_per_type:
 				current_type_idx += 1
+	print(np.array(new_X).shape, 'shape')
 
 	return [np.array(new_X), np.array(new_trainy)]
 
