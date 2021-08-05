@@ -28,6 +28,6 @@ for i in [3, 10]:
 
         r2.main(types, num_train, j)
         print('complete_'+str(i)+'_gan_r2')
-        shutil.rmtree('./results')
-        os.mkdir('./results')
+        # shutil.rmtree('./results')
+        # os.mkdir('./results')
         print('done')

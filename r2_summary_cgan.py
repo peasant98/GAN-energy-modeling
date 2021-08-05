@@ -119,17 +119,17 @@ def calculate(path_csv_list,gan_type,train_size,epochs,label_list):
     return summary
 
 def main(types, train_size, i, gan_type='cgan'):
-    types = [7, 12, 14, 15]
+    # types = [7, 12, 14, 15]
     if gan_type == 'infogan':
         for gan_type in [gan_type]:
             final_table = []
             keys_permutations = list(itertools.permutations(types))
-
+            keys_permutations = [types]
             for perm in keys_permutations:
                 list_perm = list(perm)
                 for epochs in range(50,2001,50):
                     path_csv_list = []
-                    path_csv_list.append(f'./results/{gan_type}_results_trainsize{train_size}_epochs{epochs}_perm{list_perm}.csv')
+                    path_csv_list.append(f'./results/perm{list_perm}_{gan_type}_results_trainsize{train_size}_epochs{epochs}.csv')
                     summary = calculate(path_csv_list,gan_type,train_size,epochs,list_perm)
                     for row in summary:
                         final_table.append(row)
