@@ -2,6 +2,7 @@ import pickle
 
 import pandas as pd
 import numpy as np
+import itertools
 
 
 def sample_load_results(filename):
@@ -107,16 +108,34 @@ def combine_pickle_data(filenames_list, outfilename):
 def main(types, train_size, gan_type='cgan'):
     # load the results
     # sample_load_results('gan_results2575.pickle')
-    for i in range(50,2001,50):
-        basefilename = f'./results/{gan_type}_results_trainsize{train_size}'
+    if gan_type == 'infogan':
+
+        for i in range(50,2001,50):
+
+            keys_permutations = list(itertools.permutations(types))
+            keys_permutations = [types]
+            for perm in keys_permutations:
+                basefilename = f'./results/perm{perm}_{gan_type}_results_trainsize{train_size}'
+
+                # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
+                pickle_name = '{basefilename}_epoch{i}.pickle'.format(basefilename=basefilename,
+                                                                        i=i)
+
+                # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
+                outcsvname = '{basefilename}_epochs{i}.csv'.format(basefilename=basefilename, i=i)
+
+                convert_results_pickle_to_csv(pickle_name, outfilename=outcsvname)
+
+    else:
+        for i in range(50,2001,50):
+            basefilename = f'./results/{gan_type}_results_trainsize{train_size}'
 
 
-        # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
-        pickle_name = '{basefilename}_epoch{i}.pickle'.format(basefilename=basefilename,
-                                                                i=i)
+            # pickle_name = f'{basefilename}_epochs{i}_type_{building_type}.pickle'
+            pickle_name = '{basefilename}_epoch{i}.pickle'.format(basefilename=basefilename,
+                                                                    i=i)
 
-        # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
-        outcsvname = '{basefilename}_epochs{i}.csv'.format(basefilename=basefilename, i=i)
+            # outcsvname = f'{basefilename}_epochs{i}_type_{building_type}.csv'
+            outcsvname = '{basefilename}_epochs{i}.csv'.format(basefilename=basefilename, i=i)
 
-        convert_results_pickle_to_csv(pickle_name, outfilename=outcsvname)
-
+            convert_results_pickle_to_csv(pickle_name, outfilename=outcsvname)

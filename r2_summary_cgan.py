@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import itertools
 
 def collect_data(path_csv):
     data = pd.read_csv(path_csv)
@@ -118,14 +119,34 @@ def calculate(path_csv_list,gan_type,train_size,epochs,label_list):
     return summary
 
 def main(types, train_size, i, gan_type='cgan'):
-    types = [7, 12, 14, 15]
-    for gan_type in [gan_type]:
-        final_table = []
-        for epochs in range(50,2001,50):
-            path_csv_list = []
-            path_csv_list.append(f'./results/{gan_type}_results_trainsize{train_size}_epochs{epochs}.csv')
-            summary = calculate(path_csv_list,gan_type,train_size,epochs,types)
-            for row in summary:
-                final_table.append(row)
-        df = pd.DataFrame(final_table,columns = ['gan_type','train_size','epochs','building_type','avg_r2','median_r2','25th_percent_r2','75th_percent_r2','iqr_r2'])
-        df.to_csv('./'+str(i)+'_csv/1_'+gan_type+'_trainsize'+str(train_size)+'.csv',index = False)
+    # types = [7, 12, 14, 15]
+    if gan_type == 'infogan':
+        for gan_type in [gan_type]:
+            final_table = []
+            keys_permutations = list(itertools.permutations(types))
+            keys_permutations = [types]
+            for perm in keys_permutations:
+                list_perm = list(perm)
+                for epochs in range(50,2001,50):
+                    path_csv_list = []
+                    path_csv_list.append(f'./results/perm{list_perm}_{gan_type}_results_trainsize{train_size}_epochs{epochs}.csv')
+                    summary = calculate(path_csv_list,gan_type,train_size,epochs,list_perm)
+                    for row in summary:
+                        final_table.append(row)
+                df = pd.DataFrame(final_table,columns = ['gan_type','train_size','epochs','building_type','avg_r2','median_r2','25th_percent_r2','75th_percent_r2','iqr_r2'])
+                df.to_csv('./'+str(i)+'_csv/1_'+gan_type+'_trainsize'+str(train_size)+ '_perm' + str(list_perm) + '.csv',index = False)
+
+
+
+
+    else:
+         for gan_type in [gan_type]:
+            final_table = []
+            for epochs in range(50,2001,50):
+                path_csv_list = []
+                path_csv_list.append(f'./results/{gan_type}_results_trainsize{train_size}_epochs{epochs}.csv')
+                summary = calculate(path_csv_list,gan_type,train_size,epochs,types)
+                for row in summary:
+                    final_table.append(row)
+            df = pd.DataFrame(final_table,columns = ['gan_type','train_size','epochs','building_type','avg_r2','median_r2','25th_percent_r2','75th_percent_r2','iqr_r2'])
+            df.to_csv('./'+str(i)+'_csv/1_'+gan_type+'_trainsize'+str(train_size)+'.csv',index = False)
