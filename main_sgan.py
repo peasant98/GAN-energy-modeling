@@ -12,12 +12,12 @@ if not os.path.isdir('./h5'):
 if not os.path.isdir('./results'):
     os.mkdir('./results')
 
-for i in [3, 10]:
+for i in [10]:
     num_train = i*10
     sgan.main(types, num_train)
     print('complete_'+str(i)+'_sgan_training')
 
-    for j in range(1, 6):
+    for j in range(1, 2):
         if not os.path.isdir('./'+str(j)+'_csv'):
             os.mkdir('./'+str(j)+'_csv')
         gener.main(types, gens, num_train)
@@ -28,6 +28,6 @@ for i in [3, 10]:
 
         r2.main(types, num_train, j, gan_type='sgan')
         print('complete_'+str(i)+'_gan_r2')
-        shutil.rmtree('./results')
-        os.mkdir('./results')
+        # shutil.rmtree('./results')
+        # os.mkdir('./results')
         print('done')
