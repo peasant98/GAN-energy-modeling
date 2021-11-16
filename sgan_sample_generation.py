@@ -85,6 +85,45 @@ def generate_fake_samples(generator, latent_dim, n_samples, n_classes):
 	y = zeros((n_samples, 1))
 	return [images, labels_input], y
 
+def summarize_performancev2(step, latent_dim, num_classes=4,
+						  num_train=400, train_size=100, gan_type='sgan',
+                          epochs=10, gen_dict=None):
+
+	"""
+	generate samples from sgan
+	"""    
+
+	g_model_str = f'./h5/{gan_type}_g_model_trainsize{train_size}_epochs{epochs}.h5'
+
+	g_model = load_model(g_model_str)
+
+	c_model_str = f'./h5/{gan_type}_c_model_trainsize{train_size}_epochs{epochs}.h5'
+
+	c_model = load_model(c_model_str)
+
+	all_predictions = []
+	filename = f'./results/{gan_type}_results_trainsize{train_size}_epoch{epochs}.pickle'
+
+	for _ in range(10):
+
+		zs = generate_latent_points_grid(latent_dim, 610)
+		# run some prediction
+		predictions = prediction(zs, c_model, g_model)
+		for entry in predictions:
+			building_type = entry[0]
+			all_predictions.append(entry)
+	
+
+	with open(filename, 'wb') as handle:
+		pickle.dump(all_predictions, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+def finished_generation(desired_dict, current_dict):
+	for key in desired_dict:
+		if desired_dict[key] != current_dict[key]:
+			return False
+	
+	return True
+
 
 def summarize_performance(step, latent_dim, num_classes=4,
 						  num_train=400, train_size=100, gan_type='sgan',
@@ -158,5 +197,5 @@ def main(types, gens, num_train, gan_type='sgan'):
 	latent_dim = 1000
 
 	for i in range(50, 2001, 50):
-		summarize_performance(i, latent_dim, num_classes=4, train_size=num_train, epochs=i,
+		summarize_performancev2(i, latent_dim, num_classes=4, train_size=num_train, epochs=i,
 								gan_type=gan_type, gen_dict=gen_dict, num_train=num_train)

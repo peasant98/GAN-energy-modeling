@@ -14,7 +14,7 @@ if not os.path.isdir('./results'):
 
 for i in [10]:
     num_train = i*10
-    sgan.main(types, num_train)
+    # sgan.main(types, num_train)
     print('complete_'+str(i)+'_sgan_training')
 
     for j in range(1, 2):
