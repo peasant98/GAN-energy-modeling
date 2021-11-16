@@ -196,6 +196,6 @@ def main(types, gens, num_train, gan_type='sgan'):
 
 	latent_dim = 1000
 
-	for i in range(50, 2001, 50):
+	for i in range(1900, 2001, 50):
 		summarize_performancev2(i, latent_dim, num_classes=4, train_size=num_train, epochs=i,
 								gan_type=gan_type, gen_dict=gen_dict, num_train=num_train)

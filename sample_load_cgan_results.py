@@ -127,7 +127,7 @@ def main(types, train_size, gan_type='cgan'):
                 convert_results_pickle_to_csv(pickle_name, outfilename=outcsvname)
 
     else:
-        for i in range(50,2001,50):
+        for i in range(1900,2001,50):
             basefilename = f'./results/{gan_type}_results_trainsize{train_size}'
 
 

@@ -142,7 +142,7 @@ def main(types, train_size, i, gan_type='cgan'):
     else:
          for gan_type in [gan_type]:
             final_table = []
-            for epochs in range(50,2001,50):
+            for epochs in range(1900,2001,50):
                 path_csv_list = []
                 path_csv_list.append(f'./results/{gan_type}_results_trainsize{train_size}_epochs{epochs}.csv')
                 summary = calculate(path_csv_list,gan_type,train_size,epochs,types)
