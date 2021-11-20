@@ -2,7 +2,7 @@ from numpy import zeros, hstack
 from numpy.random import randn
 from numpy.random import randint
 from keras.models import load_model
-from keras.utils import to_categorical
+from tensorflow.keras.utils import to_categorical
 
 
 import pickle
@@ -10,12 +10,12 @@ import pandas as pd
 import numpy as np
 import itertools
 
-# from tensorflow.compat.v1 import ConfigProto
-# from tensorflow.compat.v1 import InteractiveSession
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
 
 
-from tensorflow import ConfigProto
-from tensorflow import InteractiveSession
+# from tensorflow import ConfigProto
+# from tensorflow import InteractiveSession
 
 SELECTED_CLASSES = [7, 12, 14, 15]
 # SELECTED_CLASSES = [4, 5, 9, 10]
@@ -23,48 +23,55 @@ SELECTED_CLASSES = [7, 12, 14, 15]
 TIMES = []
 
 
-def denormalize(power_predictions, class_predictions, csv_path='data_collect_maxmin.csv', filename='gan_results.pickle'):
+def denormalize(power_predictions, class_predictions, cat_codes, csv_path='data_collect_maxmin.csv', filename='gan_results.pickle'):
 	df = pd.read_csv(csv_path)
 	# results is a list of lists -- each entry contains building_type id, followed
 	# by the normalized val.
+	final_arr = []
 
-	class_permutations = list(itertools.permutations(SELECTED_CLASSES))
-	class_permutations = [SELECTED_CLASSES]
-	for class_permutation in class_permutations:
-		final_arr = []
 
-		for idx, power_prediction in enumerate(power_predictions):
-			building_type = int(class_predictions[idx])
-			row = df.values[class_permutation[building_type]]
-			max_val = row[1]
-			min_val = row[2]
-			denormalized_val = power_prediction * (max_val - min_val) + (max_val + min_val)
-			denormalized_val /= 2
-			final_arr.append([class_permutation[building_type], denormalized_val])
+	for idx, power_prediction in enumerate(power_predictions):
+		building_type = class_predictions[idx]
+		row = df.values[SELECTED_CLASSES[building_type]]
+		max_val = row[1]
+		min_val = row[2]
+		denormalized_val = power_prediction * (max_val - min_val) + (max_val + min_val)
+		denormalized_val /= 2
+		final_arr.append([SELECTED_CLASSES[building_type], cat_codes[idx], denormalized_val])
 
-		# convert to pickle file for now.
-		with open(f'./results/perm{class_permutation}_{filename}', 'wb') as handle:
-			pickle.dump(final_arr, handle, protocol=pickle.HIGHEST_PROTOCOL)
+	# convert to pickle file for now.
+	with open(f'./results/{filename}', 'wb') as handle:
+		pickle.dump(final_arr, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 	return final_arr
 
 
-def prediction(zs, classes, g_model, filename):
+def prediction(zs, classes, g_model, c_model, filename):
 	# predict normalized value of generator with latent space as input.
 	results = []
 	normalized_val = g_model.predict(zs)
 	# predict class with normalized val
-	class_predictions = classes
-	power_predictions = normalized_val.reshape(normalized_val.shape[0], normalized_val.shape[1])
-	preds = {}
-	for prediction in class_predictions:
-		if prediction in preds:
-			preds[prediction] += 1
-		else:
-			preds[prediction] = 1
-	print(np.unique(class_predictions))
-	print(preds)
-	final = denormalize(power_predictions, class_predictions, filename=filename)
+	for i in range(50, 2001, 50):
+
+		filename = f'infogan_results_trainsize100_epoch{i}.pickle'
+
+		c_model_str = f'./h5/sgan_c_model_trainsize100_epochs{i}.h5'
+		c_model = load_model(c_model_str)
+		building_type_id = c_model.predict(normalized_val)
+		class_predictions = np.argmax(building_type_id, axis=-1)
+		print(i)	
+		print(np.unique(class_predictions))
+
+		power_predictions = normalized_val.reshape(normalized_val.shape[0], normalized_val.shape[1])
+		preds = {}
+		for prediction in class_predictions:
+			if prediction in preds:
+				preds[prediction] += 1
+			else:
+				preds[prediction] = 1
+		print(np.unique(class_predictions))
+		print(preds)
+		final = denormalize(power_predictions, class_predictions, classes, filename=filename)
 
 
 
@@ -85,7 +92,7 @@ def generate_latent_points(latent_dim, n_cat, n_samples,
 
 	# generate points in the latent space
 	if freq_dict is None:
-		freq_dict = {7: 400, 12: 4500, 14: 800, 15: 400}
+		freq_dict = {7: 4500, 12: 4500, 14: 4500, 15: 4500}
 
 	if generate_eval:
 		total_sum = 0
@@ -139,6 +146,10 @@ def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_s
 
 	g_model = load_model(g_model_str)
 
+	c_model_str = f'./h5/sgan_c_model_trainsize{train_size}_epochs1500.h5'
+
+	c_model = load_model(c_model_str)
+
 	# create multiple files for different ordering of control codes
 	keys_permutations = list(itertools.permutations(keys))
 	keys_permutations = [keys]
@@ -147,7 +158,8 @@ def summarize_performance(step, latent_dim, n_cat, train_size=100, epochs=0, n_s
 		[z, _], classes = generate_latent_points(latent_dim, n_cat, n_samples,
 												return_classes=True,
 												generate_eval=True, freq_dict=gen_dict, keys=list_perm)
-		prediction(z, classes, g_model, f'infogan_results_trainsize{train_size}_epoch{epochs}.pickle')
+					
+		prediction(z, classes, g_model, c_model, f'infogan_results_trainsize{train_size}_epoch{epochs}.pickle')
 
 
 def main(types, gens, num_train):
@@ -163,6 +175,6 @@ def main(types, gens, num_train):
 	n_cat = len(types)
 	latent_dim = 1000
 
-	for i in range(50, 2001, 50):
+	for i in range(2000, 2001, 50):
 		summarize_performance(i, latent_dim, n_cat=n_cat, train_size=num_train, epochs=i,
 							  gen_dict=gen_dict, keys=types)
