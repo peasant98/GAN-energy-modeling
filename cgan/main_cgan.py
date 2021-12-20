@@ -1,3 +1,7 @@
+import sys
+import os.path
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 import cgan.cgan as cgan
 import cgan.cgan_sample_generation as gener
 import cgan.sample_load_cgan_results as csv_gener

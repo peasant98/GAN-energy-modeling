@@ -1,7 +1,11 @@
+import sys
+import os.path
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+import common.r2_summary_cgan as r2
 import sgan.sgan as sgan
 import sgan.sgan_sample_generation as gener
 import cgan.sample_load_cgan_results as csv_gener
-import common.r2_summary_cgan as r2
 import shutil
 import os
 

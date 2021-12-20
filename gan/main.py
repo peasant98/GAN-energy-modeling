@@ -1,3 +1,7 @@
+import sys
+import os.path
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
 import gan.gan as gan
 import gan.gan_sample_generation as gener
 import gan.sample_load_gan_results_yy as csv_gener
