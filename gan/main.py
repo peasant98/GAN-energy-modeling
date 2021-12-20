@@ -1,7 +1,7 @@
-import gan
-import gan_sample_generation as gener
-import sample_load_gan_results_yy as csv_gener
-import r2_summary_gan as r2
+import gan.gan as gan
+import gan.gan_sample_generation as gener
+import gan.sample_load_gan_results_yy as csv_gener
+import common.r2_summary_gan as r2
 import shutil
 import os
 
