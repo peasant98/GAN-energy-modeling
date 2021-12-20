@@ -2,6 +2,8 @@
 
 Energy Modeling via GANs.
 
+Paper currently in submission to Applied Energy.
+
 Contributors:
 - Matthew Strong
 - Yunyang Ye

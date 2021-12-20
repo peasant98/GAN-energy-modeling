@@ -1,0 +1,7 @@
+numpy
+pandas
+pickle
+keras
+matplotlib
+shutil
+tensorflow
