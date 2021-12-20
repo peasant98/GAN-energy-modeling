@@ -1,8 +1,5 @@
-import gan
 import gan_final_generations as gener
 import gan_to_csv as csv_gener
-import r2_summary_gan as r2
-import shutil
 import os
 
 types = [7, 12, 14, 15]
