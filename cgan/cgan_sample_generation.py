@@ -20,7 +20,7 @@ SELECTED_CLASSES = [7, 12, 14, 15]
 TIMES = []
 
 
-def denormalize(power_predictions, class_predictions, csv_path='data_collect_maxmin.csv', filename='cgan_results.pickle'):
+def denormalize(power_predictions, class_predictions, csv_path='../data/data_collect_maxmin.csv', filename='cgan_results.pickle'):
 	df = pd.read_csv(csv_path)
 	final_arr = []
 	# results is a list of lists -- each entry contains building_type id, followed
