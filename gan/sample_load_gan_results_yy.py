@@ -23,7 +23,7 @@ def sample_load_results(filename):
 
 def convert_results_pickle_to_csv(filename, outfilename):
     generated_results = pickle.load(open(filename, 'rb'))
-    data = pd.read_csv('data_collect.csv')
+    data = pd.read_csv('../data/data_collect.csv')
     new_data = pd.DataFrame(columns=data.columns[1:])
     rows = []
     x = []
@@ -50,7 +50,7 @@ def combine_pickle_data(filenames_list, outfilename):
     """
     combines list of pickle data
     """
-    data = pd.read_csv('data_collect.csv')
+    data = pd.read_csv('../data/data_collect.csv')
     # hard-coded for now
     desired_amt = {7: 400,
                    12: 4500,

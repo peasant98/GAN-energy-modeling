@@ -28,7 +28,7 @@ import time
 from tensorflow import ConfigProto
 from tensorflow import InteractiveSession
 
-def denormalize(power_predictions, building_type, csv_path='data_collect_maxmin.csv', filename='og_gan_results.pickle'):
+def denormalize(power_predictions, building_type, csv_path='../data/data_collect_maxmin.csv', filename='og_gan_results.pickle'):
 	df = pd.read_csv(csv_path)
 	final_arr = []
 	# results is a list of lists -- each entry contains building_type id, followed
@@ -114,7 +114,7 @@ def define_gan(g_model, d_model):
 
 def load_real_samples_grid(class_num=7, num_train=400):
 	# load the REAL data.
-	f = open('./data_collect_select_class{}.csv'.format(class_num), 'r')
+	f = open('../data/data_collect_select_class{}.csv'.format(class_num), 'r')
 	# f = open(f'./data_collect_select_class{class_num}.csv','r')
 	lines = f.readlines()
 	f.close()
