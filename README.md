@@ -27,6 +27,11 @@ pip install -r requirements.txt
 
 Now, you can run training for each type of GAN. The scripts listed below train GANs on the training dataset, create generated samples, then evaluate these samples on the simulation (ground truth data).
 
+## GAN
+```sh
+python gan/gan.py
+```
+
 ## CGAN
 ```sh
 python cgan/main_cgan.py
@@ -44,12 +49,7 @@ python sgan/main_sgan.py
 
 ## InfoGAN
 ```sh
-python infogan/main_infogan.py
-```
-
-## GAN
-```sh
-python gan/main.py
+python infogan/infogan.py
 ```
 
 
