@@ -51,3 +51,23 @@ python infogan/main_infogan.py
 ```sh
 python gan/main.py
 ```
+
+
+## Model Architecture
+
+Below, we have listed the details of the GAN models and parameters.
+
+### GAN
+
+
+### CGAN
+
+
+### ACGAN
+
+
+### SGAN
+
+
+### InfoGAN
+
