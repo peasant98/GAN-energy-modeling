@@ -4,7 +4,7 @@ Energy Modeling via GANs (Generative Adversarial Networks). This work presents a
 
 Paper currently in submission.
 
-A comprehensive summary of each model is provided here:
+**A comprehensive summary of each model is provided here: [Link](model_archs/README.md)**
 
 Contributors:
 - Matthew Strong
