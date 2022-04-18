@@ -6,6 +6,11 @@ Paper currently in submission.
 
 **A comprehensive summary of each model is provided here: [Link](model_archs/README.md)**
 
+You can find summarized results in the `results/` folder.
+
+
+=========================================================================================
+
 Contributors:
 - Matthew Strong
 - Yunyang Ye
