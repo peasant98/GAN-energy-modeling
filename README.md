@@ -6,7 +6,7 @@ Paper currently in submission.
 
 **A comprehensive summary of each model is provided here: [Link](model_archs/README.md)**
 
-You can find summarized results in the `results/` folder.
+You can find summarized results in the `results/` folder. We have not included the InfoGAN results are they were deeemed infeasible to use from the raw data.
 
 
 =========================================================================================
