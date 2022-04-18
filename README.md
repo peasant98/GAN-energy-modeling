@@ -1,4 +1,4 @@
-# GAN-energy-modeling
+# GAN Energy Modeling
 
 Energy Modeling via GANs (Generative Adversarial Networks). This work presents a comprehensive evaluation of GANs for building energy modeling, titled "**Evaluating Performance of Different Generative Adversarial Networks for Large-Scale Building Power Demand Prediction**"
 
