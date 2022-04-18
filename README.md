@@ -15,9 +15,9 @@ Contributors:
 Before running anything, make sure to unzip the csv files that are necessary to run the code:
 
 ```sh
-unzip data/data_collect.zip
+unzip training_data/data_collect.zip
 
-unzip data/power_new.zip
+unzip training_data/power_new.zip
 ```
 
 Next, install the necessary python packages:
