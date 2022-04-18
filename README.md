@@ -1,13 +1,16 @@
 # GAN-energy-modeling
 
-Energy Modeling via GANs (Generative Adversarial Networks).
+Energy Modeling via GANs (Generative Adversarial Networks). This work presents a comprehensive evaluation of GANs for building energy modeling, titled "**Evaluating Performance of Different Generative Adversarial Networks for Large-Scale Building Power Demand Prediction**"
 
-Paper currently in submission to Applied Energy.
+Paper currently in submission.
+
+A comprehensive summary of each model is provided here:
 
 Contributors:
 - Matthew Strong
 - Yunyang Ye
 - Yingli Lou
+- Satish Upadhyaya
 
 Before running anything, make sure to unzip the csv files that are necessary to run the code:
 
@@ -24,7 +27,12 @@ pip install -r requirements.txt
 
 ```
 
-Now, you can run training for each type of GAN:
+Now, you can run training for each type of GAN. The scripts listed below train GANs on the training dataset, create generated samples, then evaluate these samples on the simulation (ground truth data).
+
+## GAN
+```sh
+python gan/gan.py
+```
 
 ## CGAN
 ```sh
@@ -43,10 +51,7 @@ python sgan/main_sgan.py
 
 ## InfoGAN
 ```sh
-python infogan/main_infogan.py
+python infogan/infogan.py
 ```
 
-## GAN
-```sh
-python gan/main.py
-```
+
