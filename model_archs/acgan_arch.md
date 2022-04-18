@@ -1,7 +1,7 @@
-### ACGAN Model Architecture
+# ACGAN Model Architecture
 
 
-#### Discriminator
+## Discriminator
 ```
 Discriminator:
 Model: "model"
@@ -38,7 +38,7 @@ ________________________________________________________________________________
 
 
 
-#### Generator
+## Generator
 
 ```
 Generator:
@@ -83,7 +83,7 @@ ________________________________________________________________________________
 
 ```
 
-#### Full GAN
+## Full GAN
 
 ```
 
