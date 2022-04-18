@@ -4,6 +4,8 @@ Energy Modeling via GANs (Generative Adversarial Networks). This work presents a
 
 Paper currently in submission.
 
+A comprehensive summary of each model is provided here:
+
 Contributors:
 - Matthew Strong
 - Yunyang Ye
@@ -52,22 +54,4 @@ python sgan/main_sgan.py
 python infogan/infogan.py
 ```
 
-
-## Model Architecture
-
-Below, we have listed the details of the GAN models and parameters.
-
-### GAN
-
-
-### CGAN
-
-
-### ACGAN
-
-
-### SGAN
-
-
-### InfoGAN
 
