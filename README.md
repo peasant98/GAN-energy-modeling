@@ -8,6 +8,7 @@ Contributors:
 - Matthew Strong
 - Yunyang Ye
 - Yingli Lou
+- Satish Upadhyaya
 
 Before running anything, make sure to unzip the csv files that are necessary to run the code:
 
