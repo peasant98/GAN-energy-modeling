@@ -9,7 +9,7 @@ Paper currently in submission.
 You can find summarized results in the `results/` folder. We have not included the InfoGAN results are they were deeemed infeasible to use from the raw data.
 
 
-=========================================================================================
+======================================================================================
 
 Contributors:
 - Matthew Strong
