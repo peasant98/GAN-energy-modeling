@@ -5,7 +5,7 @@ import pandas as pd
 if __name__ == '__main__':
     max_points = 400
 
-    data = pd.read_csv('../data/data_collect.csv')
+    data = pd.read_csv('training_data/data_collect.csv')
     # 10k samples
     print(data)
     res = {}
@@ -50,9 +50,9 @@ if __name__ == '__main__':
     #     else:
     #         res[val] = 0
     # print(res)
-    new_data.to_csv('../data/data_collect_select.csv', index=False)
+    new_data.to_csv('./training_data/data_collect_select.csv', index=False)
 
-    new_df.to_csv('../data/data_collect_select_equal.csv', index=False)
+    new_df.to_csv('./training_data/data_collect_select_equal.csv', index=False)
 
     for idx, val in enumerate(label_set):
-        individual_dfs[idx].to_csv('../data/data_collect_select_class{val}.csv'.format(val=val), index=False)
+        individual_dfs[idx].to_csv('./training_data/data_collect_select_class{val}.csv'.format(val=val), index=False)

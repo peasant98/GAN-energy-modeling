@@ -86,7 +86,7 @@ def key_parameter_all(data,label_list):
     return avg,median,low_percent,high_percent,iqr
 
 def calculate(path_csv_list,gan_type,train_size,epochs,label_list):
-    initial = collect_data('../data/power_new.csv')
+    initial = collect_data('./training_data/power_new.csv')
     for ind,path_csv in enumerate(path_csv_list):
         if ind == 0:
             generated = collect_data(path_csv)

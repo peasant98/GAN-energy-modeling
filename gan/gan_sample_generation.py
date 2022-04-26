@@ -30,7 +30,7 @@ import time
 from tensorflow import ConfigProto
 from tensorflow import InteractiveSession
 
-def denormalize(power_predictions, building_type, csv_path='../data/data_collect_maxmin.csv', filename='og_gan_results.pickle'):
+def denormalize(power_predictions, building_type, csv_path='./training_data/data_collect_maxmin.csv', filename='og_gan_results.pickle'):
     df = pd.read_csv(csv_path)
     final_arr = []
     # results is a list of lists -- each entry contains building_type id, followed

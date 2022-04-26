@@ -23,7 +23,7 @@ SELECTED_CLASSES = [7, 12, 14, 15]
 TIMES = []
 
 
-def denormalize(power_predictions, class_predictions, cat_codes, csv_path='../data/data_collect_maxmin.csv', filename='gan_results.pickle'):
+def denormalize(power_predictions, class_predictions, cat_codes, csv_path='./training_data/data_collect_maxmin.csv', filename='gan_results.pickle'):
 	df = pd.read_csv(csv_path)
 	# results is a list of lists -- each entry contains building_type id, followed
 	# by the normalized val.
