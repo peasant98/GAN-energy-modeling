@@ -39,7 +39,7 @@ SELECTED_CLASSES = [7, 12, 14, 15]
 TIMES = []
 
 
-def denormalize(power_predictions, class_predictions, csv_path='../data/data_collect_maxmin.csv', filename='gan_results.pickle'):
+def denormalize(power_predictions, class_predictions, csv_path='training_data/data_collect_maxmin.csv', filename='gan_results.pickle'):
 	df = pd.read_csv(csv_path)
 	final_arr = []
 	# results is a list of lists -- each entry contains building_type id, followed
@@ -77,8 +77,6 @@ def prediction(zs, classes, g_model, filename):
 	print(np.unique(class_predictions))
 	print(preds)
 	final = denormalize(power_predictions, class_predictions, filename=filename)
-
-
 
 
 # define the standalone discriminator model
@@ -167,7 +165,7 @@ def define_gan(g_model, d_model):
 
 def load_real_samples_grid(num_types=4, num_per_type=100):
 	# load the REAL data.
-	f = open('../data/data_collect_select_equal.csv','r')
+	f = open('training_data/data_collect_select_equal.csv','r')
 	lines = f.readlines()
 	f.close()
 	X_temp = []
